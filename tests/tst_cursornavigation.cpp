@@ -13,6 +13,7 @@ public:
 private slots:
     void test_pluginLoading();
     void test_registering();
+    void test_followsFocus();
     void test_withKeyNavigation();
     void test_spatial4Directions();
 
@@ -39,6 +40,12 @@ void TestCursorNavigation::test_registering()
     //adding the property should add item to the register
     //deleting the item should unregister the item
     //unsetting the property should unregister the item
+}
+
+void TestCursorNavigation::test_followsFocus()
+{
+    //test that the cursor follows focus; means cursor is moved between the
+    //items when the focus is changed some other way
 }
 
 void TestCursorNavigation::test_withKeyNavigation()

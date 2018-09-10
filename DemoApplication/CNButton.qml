@@ -12,6 +12,7 @@ Button {
         border.color: "red"
         anchors.fill: parent
         visible: button.hasCursor
+        color: "transparent"
     }
 
 }

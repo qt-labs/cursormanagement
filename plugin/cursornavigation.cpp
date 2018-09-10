@@ -8,33 +8,29 @@ const char CursorNavigation::windowPropertyName[] = "cursor_navigation";
 
 CursorNavigation::CursorNavigation(QQuickWindow *parent)
 :QObject(parent)
+,m_window(parent)
 ,m_inputAdapter(parent, this)
 ,m_currentItem(nullptr)
 {
     m_algorithms.push_back(new SpatialNavigation4Dir(&m_itemRegister));
+
+    connect(m_window, &QQuickWindow::activeFocusItemChanged, this, &CursorNavigation::onActiveFocusItemChanged);
+    onActiveFocusItemChanged();
 }
 
 bool CursorNavigation::inputCommand(CursorNavigationCommand cmd)
 {
-    QQuickItem *nextItem;
+    QQuickItem *nextItem = nullptr;
 
     for (auto alg : m_algorithms) {
         nextItem = alg->getNextCandidate(m_itemRegister.items(), m_currentItem, cmd);
-        if (nextItem)
+        if (nextItem) {
+            setCursorOnItem(nextItem);
             break;
+        }
     }
 
-    if (nextItem) {
-        if (m_currentItem) {
-            CursorNavigationAttached *current=cursorNavigationAttachment(m_currentItem);
-            Q_ASSERT(current);
-            current->setHasCursor(false);
-        }
-        CursorNavigationAttached *next=cursorNavigationAttachment(nextItem);
-        Q_ASSERT(next);
-        next->setHasCursor(true);
-        m_currentItem = nextItem;
-    }
+    return true;
 }
 
 CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *object)
@@ -45,7 +41,7 @@ CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *objec
     }
 
     if (!qobject_cast<QQuickItem *>(object)) {
-        qWarning("Cannot manage focus for a non-Item!");
+        qWarning("Cannot manage cursor for a non-Item!");
         return nullptr;
     }
 
@@ -79,9 +75,36 @@ CursorNavigation *CursorNavigation::cursorNavigationForWindow(QQuickWindow *wind
     return cursorNavigation;
 }
 
+void CursorNavigation::setCursorOnItem(QQuickItem *item)
+{
+    if (item != m_currentItem) {
+        if (m_currentItem) {
+            CursorNavigationAttached *current=cursorNavigationAttachment(m_currentItem);
+            Q_ASSERT(current);
+            m_currentItem->setFocus(false);
+            current->setHasCursor(false);
+        }
+        CursorNavigationAttached *next=cursorNavigationAttachment(item);
+        if (next) {
+            next->setHasCursor(true);
+            m_currentItem = item;
+            m_currentItem->setFocus(true);
+            qWarning() << "Set cursor to " << item;
+        } else {
+            qWarning() << "Set cursor to NULL";
+            m_currentItem = nullptr;
+        }
+    }
+}
+
+void CursorNavigation::onActiveFocusItemChanged()
+{
+    qWarning() << "onActiveFocusItemChanged, item:" << m_window->activeFocusItem();
+    setCursorOnItem(m_window->activeFocusItem());
+}
+
 CursorNavigationAttached *CursorNavigation::cursorNavigationAttachment(QQuickItem *item)
 {
-    Q_ASSERT(item);
     return static_cast<CursorNavigationAttached *>(qmlAttachedPropertiesObject<CursorNavigation>(item, false));
 }
 

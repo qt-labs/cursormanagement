@@ -27,10 +27,13 @@ public:
 
 private:
     void setCursorOnItem(QQuickItem *item);
+    void onActiveFocusItemChanged();
+
     static CursorNavigationAttached *cursorNavigationAttachment(QQuickItem *item);
 
 private:
     static const char windowPropertyName[];
+    QQuickWindow *m_window;
     InputAdapter m_inputAdapter;
     QQuickItem *m_currentItem; //item that currently has the cursor
     QList<CursorNavigationAlgorithm*> m_algorithms;
