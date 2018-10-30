@@ -4,22 +4,19 @@
 #include <QList>
 #include "inputtypes.h"
 
-class ItemRegister;
-class QQuickItem;
+class CursorNavigationAttached;
 
 class CursorNavigationAlgorithm
 {
 public:
-    CursorNavigationAlgorithm(ItemRegister *itemRegister);
+    CursorNavigationAlgorithm();
 
     virtual ~CursorNavigationAlgorithm();
 
-    virtual QQuickItem* getNextCandidate(const QList<QQuickItem*> &candidates,
-                                         const QQuickItem *currentItem,
-                                         const CursorNavigationCommand& cmd) = 0;
-
-private:
-    ItemRegister *m_itemRegister;
+    virtual CursorNavigationAttached* getNextCandidate(
+                            const QList<CursorNavigationAttached*> &candidates,
+                            const CursorNavigationAttached *currentItem,
+                            const CursorNavigationCommand& cmd) = 0;
 
 };
 

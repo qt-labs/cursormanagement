@@ -6,11 +6,12 @@
 class SpatialNavigation4Dir : public CursorNavigationAlgorithm
 {
 public:
-    SpatialNavigation4Dir(ItemRegister *itemRegister);
+    SpatialNavigation4Dir();
 
-    virtual QQuickItem* getNextCandidate(const QList<QQuickItem*> &candidates,
-                                         const QQuickItem *currentItem,
-                                         const CursorNavigationCommand &cmd);
+    virtual CursorNavigationAttached* getNextCandidate(
+                            const QList<CursorNavigationAttached*> &candidates,
+                            const CursorNavigationAttached *currentItem,
+                            const CursorNavigationCommand &cmd);
 
 };
 

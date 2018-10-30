@@ -25,20 +25,22 @@ public:
 
     static CursorNavigation *cursorNavigationForWindow(QQuickWindow *window);
 
-private:
-    void setCursorOnItem(QQuickItem *item);
-    void onActiveFocusItemChanged();
-
     static CursorNavigationAttached *cursorNavigationAttachment(QQuickItem *item);
+
+private:
+    void setCursorOnItem(CursorNavigationAttached *item);
+    void onActiveFocusItemChanged();
+    void registerItem(CursorNavigationAttached* item);
+    void unregisterItem(CursorNavigationAttached* item);
 
 private:
     static const char windowPropertyName[];
     QQuickWindow *m_window;
     InputAdapter m_inputAdapter;
-    QQuickItem *m_currentItem; //item that currently has the cursor
+    CursorNavigationAttached *m_currentItem; //item that currently has the cursor
     QList<CursorNavigationAlgorithm*> m_algorithms;
-    ItemRegister m_itemRegister;
-
+    //a root item that is not tied to any actual QQuickItem
+    CursorNavigationAttached m_rootItem;
 
     friend class CursorNavigationAttached;
 };

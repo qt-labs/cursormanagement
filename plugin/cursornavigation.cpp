@@ -11,8 +11,9 @@ CursorNavigation::CursorNavigation(QQuickWindow *parent)
 ,m_window(parent)
 ,m_inputAdapter(parent, this)
 ,m_currentItem(nullptr)
+,m_rootItem(nullptr)
 {
-    m_algorithms.push_back(new SpatialNavigation4Dir(&m_itemRegister));
+    m_algorithms.push_back(new SpatialNavigation4Dir());
 
     connect(m_window, &QQuickWindow::activeFocusItemChanged, this, &CursorNavigation::onActiveFocusItemChanged);
     onActiveFocusItemChanged();
@@ -20,10 +21,14 @@ CursorNavigation::CursorNavigation(QQuickWindow *parent)
 
 bool CursorNavigation::inputCommand(CursorNavigationCommand cmd)
 {
-    QQuickItem *nextItem = nullptr;
+    CursorNavigationAttached *nextItem = nullptr;
+
+    QList<CursorNavigationAttached*> &candidates = m_currentItem ?
+                                m_currentItem->m_parentNavigable->m_children :
+                                m_rootItem.m_children;
 
     for (auto alg : m_algorithms) {
-        nextItem = alg->getNextCandidate(m_itemRegister.items(), m_currentItem, cmd);
+        nextItem = alg->getNextCandidate(candidates, m_currentItem, cmd);
         if (nextItem) {
             setCursorOnItem(nextItem);
             break;
@@ -75,21 +80,24 @@ CursorNavigation *CursorNavigation::cursorNavigationForWindow(QQuickWindow *wind
     return cursorNavigation;
 }
 
-void CursorNavigation::setCursorOnItem(QQuickItem *item)
+CursorNavigationAttached *CursorNavigation::cursorNavigationAttachment(QQuickItem *item)
 {
+    return dynamic_cast<CursorNavigationAttached *>(qmlAttachedPropertiesObject<CursorNavigation>(item, false));
+}
+
+void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
+{
+    qWarning() << "set cursor on item " << item << " , currentItem " << m_currentItem;
     if (item != m_currentItem) {
         if (m_currentItem) {
-            CursorNavigationAttached *current=cursorNavigationAttachment(m_currentItem);
-            Q_ASSERT(current);
-            m_currentItem->setFocus(false);
-            current->setHasCursor(false);
+            m_currentItem->setHasCursor(false);
+            //m_currentItem->item()->setFocus(false);
         }
-        CursorNavigationAttached *next=cursorNavigationAttachment(item);
-        if (next) {
-            next->setHasCursor(true);
+        if (item) {
+            item->setHasCursor(true);
             m_currentItem = item;
-            m_currentItem->setFocus(true);
-            qWarning() << "Set cursor to " << item;
+            m_currentItem->item()->setFocus(true);
+            qWarning() << "Set cursor to " << item->item();
         } else {
             qWarning() << "Set cursor to NULL";
             m_currentItem = nullptr;
@@ -100,11 +108,40 @@ void CursorNavigation::setCursorOnItem(QQuickItem *item)
 void CursorNavigation::onActiveFocusItemChanged()
 {
     qWarning() << "onActiveFocusItemChanged, item:" << m_window->activeFocusItem();
-    setCursorOnItem(m_window->activeFocusItem());
+    setCursorOnItem(cursorNavigationAttachment(m_window->activeFocusItem()));
 }
 
-CursorNavigationAttached *CursorNavigation::cursorNavigationAttachment(QQuickItem *item)
+void CursorNavigation::registerItem(CursorNavigationAttached* item)
 {
-    return static_cast<CursorNavigationAttached *>(qmlAttachedPropertiesObject<CursorNavigation>(item, false));
+    qWarning() << "register item " << item;
+    if (!item)
+        return;
+
+    //find first cursor navigable parent
+    QQuickItem *parentItem = item->item()->parentItem();
+    CursorNavigationAttached *parentCNA=nullptr;
+    while (parentItem) {
+        if ((parentCNA=CursorNavigation::cursorNavigationAttachment(parentItem)))
+            break;
+        parentItem = parentItem->parentItem();
+    }
+
+    if (parentCNA) {
+        item->m_parentNavigable=parentCNA;
+        parentCNA->m_children.append(item);
+    } else {
+        m_rootItem.m_children.append(item);
+        item->m_parentNavigable=&m_rootItem;
+    }
+}
+
+void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
+{
+    qWarning() << "unregister item " << item;
+    if (item == m_currentItem)
+        setCursorOnItem(nullptr);
+
+    if (item->m_parentNavigable)
+        item->m_parentNavigable->m_children.removeOne(item);
 }
 

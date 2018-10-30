@@ -3,6 +3,7 @@
 
 //#include <qqml.h>
 #include <QObject>
+#include <QList>
 
 class CursorNavigation;
 class QQuickItem;
@@ -13,15 +14,17 @@ class CursorNavigationAttached : public QObject
     Q_OBJECT
     //is available for cursor navigation
     Q_PROPERTY(bool acceptsCursor READ acceptsCursor WRITE setAcceptsCursor NOTIFY acceptsCursorChanged)
-    //is available for cursor navigation
+    //indicates if item is currently selected, indicated also by activeFocus property
     Q_PROPERTY(bool hasCursor READ hasCursor NOTIFY hasCursorChanged)
-    //traps cursor. a trapped cursor can not be traversed outside of the item that traps it
+    //indicates if one of children is currently selected
+    Q_PROPERTY(bool childHasCursor READ hasCursor NOTIFY hasCursorChanged)
+    //traps cursor. a trapped cursor can not be traversed outside of the item that traps it until the escape input is given
     Q_PROPERTY(bool trapsCursor READ trapsCursor WRITE setTrapsCursor NOTIFY trapsCursorChanged)
-    //proxy cursor to other items
-    //Q_PROPERTY(QQmlListProperty<QQuickItem> preferredCursorTargets READ preferredCursorTargetsQML)
+
 
 public:
     CursorNavigationAttached(QQuickItem *parent);
+    ~CursorNavigationAttached();
 
     bool acceptsCursor() const;
     void setAcceptsCursor(bool acceptsCursor);
@@ -30,6 +33,8 @@ public:
 
     bool trapsCursor() const;
     void setTrapsCursor(bool trapsCursor);
+
+    QQuickItem *item() const;
 
 signals:
     void acceptsCursorChanged(bool acceptsCursor);
@@ -40,10 +45,13 @@ private slots:
     void onWindowChanged(QQuickWindow *window);
 
 private:
-    QQuickItem *item() const;
     void setHasCursor(bool hasCursor);
+    QList<CursorNavigationAttached*> &siblings();
 
     CursorNavigation *m_cursorNavigation;
+    CursorNavigationAttached *m_parentNavigable;
+    QList<CursorNavigationAttached*> m_children;
+
     bool m_acceptsCursor;
     bool m_hasCursor;
     bool m_trapsCursor;

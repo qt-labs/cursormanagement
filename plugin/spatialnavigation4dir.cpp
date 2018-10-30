@@ -1,4 +1,5 @@
 #include "spatialnavigation4dir.h"
+#include "cursornavigationattached.h"
 #include <QQuickItem>
 #include <QDebug>
 #include <algorithm>
@@ -15,15 +16,15 @@ float distanceSquared(const QRectF& item1, const QRectF& item2)
     return dx*dx+dy*dy;
 }
 
-SpatialNavigation4Dir::SpatialNavigation4Dir(ItemRegister *itemRegister)
-    :CursorNavigationAlgorithm (itemRegister)
+SpatialNavigation4Dir::SpatialNavigation4Dir()
 {
 
 }
 
-QQuickItem* SpatialNavigation4Dir::getNextCandidate(const QList<QQuickItem*> &candidates,
-                                                const QQuickItem *currentItem,
-                                                const CursorNavigationCommand &cmd)
+CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
+                            const QList<CursorNavigationAttached*> &candidates,
+                            const CursorNavigationAttached *currentItem,
+                            const CursorNavigationCommand &cmd)
 {
     if (candidates.isEmpty())
         return nullptr;
@@ -47,8 +48,8 @@ QQuickItem* SpatialNavigation4Dir::getNextCandidate(const QList<QQuickItem*> &ca
     std::function<bool(const QRectF&)> isInProjection;
 
     //scene coords of the current item
-    const QRectF currentItemSceneRect = currentItem->mapRectToScene(QRectF( 0, 0,
-                                          currentItem->width(), currentItem->height() ));
+    const QRectF currentItemSceneRect = currentItem->item()->mapRectToScene(QRectF( 0, 0,
+                                          currentItem->item()->width(), currentItem->item()->height() ));
 
     //NOTICE: overlapping candidates will be ignored for now (TODO, this needs to be changed)
 
@@ -90,21 +91,22 @@ QQuickItem* SpatialNavigation4Dir::getNextCandidate(const QList<QQuickItem*> &ca
         return nullptr;
     }
 
-    std::pair<QQuickItem*,int> closest(nullptr,0);
+    std::pair<CursorNavigationAttached*,int> closest(nullptr,0);
 
     //qDebug() << "current: x=" << currentItemSceneRect.x() << " y=" << currentItemSceneRect.y();
 
     for (auto candidate : candidates)
     {
-        if (!candidate->isVisible() || !candidate->isEnabled()) {
+        QQuickItem *candidateItem = candidate->item();
+        if (!candidateItem->isVisible() || !candidateItem->isEnabled()) {
             //qDebug() << "skipping a invisible/disabled item";
             continue;
         }
 
         //scene coords of the candidate
-        QRectF candidateSceneRect = candidate->mapRectToScene(
+        QRectF candidateSceneRect = candidateItem->mapRectToScene(
                                     QRect( 0, 0,
-                                    candidate->width(), candidate->height() ));
+                                    candidateItem->width(), candidateItem->height() ));
 
         //qDebug() << "x=" << candidateSceneRect.x() << " y=" << candidateSceneRect.y();
 
@@ -122,9 +124,9 @@ QQuickItem* SpatialNavigation4Dir::getNextCandidate(const QList<QQuickItem*> &ca
 
     if (closest.first)
     {
-        qDebug() << "chosen one: " << closest.first->mapRectToScene(
+        qDebug() << "chosen one: " << closest.first->item()->mapRectToScene(
                         QRect( 0, 0,
-                        closest.first->width(), closest.first->height() ));
+                        closest.first->item()->width(), closest.first->item()->height() ));
     }
 
     if (!closest.first) {
@@ -132,15 +134,16 @@ QQuickItem* SpatialNavigation4Dir::getNextCandidate(const QList<QQuickItem*> &ca
 
         for (auto candidate : candidates)
         {
-            if (!candidate->isVisible() || !candidate->isEnabled()) {
+            QQuickItem *candidateItem = candidate->item();
+            if (!candidateItem->isVisible() || !candidateItem->isEnabled()) {
                 //qDebug() << "skipping a invisible/disabled item";
                 continue;
             }
 
             //scene coords of the candidate
-            QRectF candidateSceneRect = candidate->mapRectToScene(
+            QRectF candidateSceneRect = candidateItem->mapRectToScene(
                                         QRect( 0, 0,
-                                        candidate->width(), candidate->height() ));
+                                        candidateItem->width(), candidateItem->height() ));
 
             if (isInDirection(candidateSceneRect))
             {

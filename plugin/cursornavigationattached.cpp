@@ -5,17 +5,26 @@
 
 CursorNavigationAttached::CursorNavigationAttached(QQuickItem *parent)
 :QObject(parent),
-m_acceptsCursor(true),
 m_cursorNavigation(nullptr),
+m_parentNavigable(nullptr),
+m_acceptsCursor(true),
 m_hasCursor(false)
 {
-    connect(parent, &QQuickItem::windowChanged, this, &CursorNavigationAttached::onWindowChanged);
+    if (parent)
+        connect(parent, &QQuickItem::windowChanged, this, &CursorNavigationAttached::onWindowChanged);
 
-    if (item()->window())
+    if (parent && item() && item()->window())
     {
         qDebug() << "Item has a window already";
         onWindowChanged(item()->window());
     }
+}
+
+CursorNavigationAttached::~CursorNavigationAttached()
+{
+    qWarning() << "~CursorNavigationAttached";
+    if (m_cursorNavigation)
+        m_cursorNavigation->unregisterItem(this);
 }
 
 bool CursorNavigationAttached::acceptsCursor() const
@@ -53,7 +62,7 @@ void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
 {
     qDebug() << "window changed, window = " << window;
     if (m_cursorNavigation)
-        m_cursorNavigation->m_itemRegister.unregisterItem(item());
+        m_cursorNavigation->unregisterItem(this);
 
     if (window) {
         m_cursorNavigation = CursorNavigation::cursorNavigationForWindow(window);
@@ -62,7 +71,7 @@ void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
     }
 
     if (m_cursorNavigation)
-        m_cursorNavigation->m_itemRegister.registerItem(item());
+        m_cursorNavigation->registerItem(this);
 
     //emit focusManagerChanged();
 }
@@ -79,4 +88,9 @@ void CursorNavigationAttached::setHasCursor(bool hasCursor)
         m_hasCursor=hasCursor;
         emit hasCursorChanged(m_hasCursor);
     }
+}
+
+QList<CursorNavigationAttached *> &CursorNavigationAttached::siblings()
+{
+    return m_parentNavigable->m_children;
 }
