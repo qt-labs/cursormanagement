@@ -13,52 +13,74 @@ Page {
         anchors.centerIn: parent
     }
 
-    ListView {
-        id: listView
+    FocusScope {
+        CursorNavigation.acceptsCursor: true
         x: 385
         y: 19
         width: 198
         height: 359
-        delegate: Item {
-            x: 5
-            width: 80
-            height: 40
+        ListView {
+            id: listView
+            anchors.fill: parent
+            spacing: 4
+            focus: true
 
-            Row {
-                id: row1
-                Rectangle {
-                    width: 40
-                    height: 40
-                    color: colorCode
+            Rectangle {
+                border.width: 2
+                border.color: "red"
+                anchors.fill: parent
+                visible: listView.activeFocus
+                color: "transparent"
+            }
+
+            highlight: Rectangle {
+                border.width: 2
+                border.color: "red"
+                color: "grey"
+            }
+
+            delegate: Item {
+                x: 5
+                width: listView.width
+                height: 40
+
+                Row {
+                    id: row1
+                    Rectangle {
+                        width: 40
+                        height: 40
+                        color: colorCode
+                    }
+
+                    Text {
+                        text: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.bold: true
+                    }
+                    spacing: 10
+                }
+            }
+
+            model: ListModel {
+                ListElement {
+                    name: "Grey"
+                    colorCode: "grey"
                 }
 
-                Text {
-                    text: name
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.bold: true
+                ListElement {
+                    name: "Red"
+                    colorCode: "red"
                 }
-                spacing: 10
-            }
-        }
-        model: ListModel {
-            ListElement {
-                name: "Grey"
-                colorCode: "grey"
-            }
 
-            ListElement {
-                name: "Red"
-                colorCode: "red"
-            }
+                ListElement {
+                    name: "Blue"
+                    colorCode: "blue"
+                }
 
-            ListElement {
-                name: "Blue"
-                colorCode: "blue"
-            }
-
-            ListElement {
-                name: "Green"
-                colorCode: "green"
+                ListElement {
+                    name: "Green"
+                    colorCode: "green"
+                }
             }
         }
     }
@@ -83,4 +105,12 @@ Page {
         y: 266
         text: qsTr("Button")
     }
+
+    CNButton {
+        id: button3
+        x: 400
+        y: 400
+        text: qsTr("Button")
+    }
+
 }

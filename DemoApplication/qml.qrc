@@ -6,5 +6,6 @@
         <file>Page2Form.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>CNButton.qml</file>
+        <file>Page3Form.qml</file>
     </qresource>
 </RCC>

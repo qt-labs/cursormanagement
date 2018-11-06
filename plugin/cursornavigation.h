@@ -2,12 +2,12 @@
 #define CURSORNAVIGATION_H
 
 #include "cursornavigationattached.h"
-#include "itemregister.h"
 #include "inputtypes.h"
 #include "inputadapter.h"
 
 #include <QObject>
 #include <qqml.h>
+#include <QStack>
 
 class QQuickItem;
 class CursorNavigationAlgorithm;
@@ -19,7 +19,9 @@ class CursorNavigation : public QObject
 public:
     CursorNavigation(QQuickWindow *parent);
 
-    bool inputCommand(CursorNavigationCommand cmd);
+    bool inputCommand(const CursorNavigationCommand &cmd);
+    void move(QVector2D moveVector);
+    void action();
 
     static CursorNavigationAttached *qmlAttachedProperties(QObject *object);
 
@@ -33,6 +35,9 @@ private:
     void registerItem(CursorNavigationAttached* item);
     void unregisterItem(CursorNavigationAttached* item);
 
+    bool handleDirectionCommand(const CursorNavigationCommand &cmd);
+    bool handleActionCommand(const CursorNavigationCommand &cmd);
+
 private:
     static const char windowPropertyName[];
     QQuickWindow *m_window;
@@ -40,7 +45,8 @@ private:
     CursorNavigationAttached *m_currentItem; //item that currently has the cursor
     QList<CursorNavigationAlgorithm*> m_algorithms;
     //a root item that is not tied to any actual QQuickItem
-    CursorNavigationAttached m_rootItem;
+    CursorNavigationAttached *m_rootItem;
+    QStack<CursorNavigationAttached*> m_scopeStack;
 
     friend class CursorNavigationAttached;
 };

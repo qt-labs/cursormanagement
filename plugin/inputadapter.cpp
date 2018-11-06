@@ -58,10 +58,10 @@ bool InputAdapter::handleKeyEvent(QKeyEvent *event)
         cmd.action = CursorNavigationCommand::Escape;
         break;
     case Qt::Key_Tab:
-        cmd.action = CursorNavigationCommand::Escape;
+        cmd.action = CursorNavigationCommand::Forward;
         break;
     case Qt::Key_Backtab:
-        cmd.action = CursorNavigationCommand::Escape;
+        cmd.action = CursorNavigationCommand::Back;
         break;
     default:
         return false;

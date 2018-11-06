@@ -20,6 +20,8 @@ class CursorNavigationAttached : public QObject
     Q_PROPERTY(bool childHasCursor READ hasCursor NOTIFY hasCursorChanged)
     //traps cursor. a trapped cursor can not be traversed outside of the item that traps it until the escape input is given
     Q_PROPERTY(bool trapsCursor READ trapsCursor WRITE setTrapsCursor NOTIFY trapsCursorChanged)
+    //item to select when
+    Q_PROPERTY(QQuickItem *escapeTarget READ escapeTarget WRITE setEscapeTarget NOTIFY escapeTargetChanged)
 
 
 public:
@@ -27,26 +29,30 @@ public:
     ~CursorNavigationAttached();
 
     bool acceptsCursor() const;
-    void setAcceptsCursor(bool acceptsCursor);
-
     bool hasCursor() const;
-
     bool trapsCursor() const;
-    void setTrapsCursor(bool trapsCursor);
+    QQuickItem *escapeTarget() const;
 
     QQuickItem *item() const;
+
+public slots:
+    void setAcceptsCursor(bool acceptsCursor);
+    void setTrapsCursor(bool trapsCursor);
+    void setEscapeTarget(QQuickItem * escapeTarget);
 
 signals:
     void acceptsCursorChanged(bool acceptsCursor);
     void hasCursorChanged(bool hasCursor);
     void trapsCursorChanged(bool trapsCursor);
 
+    void escapeTargetChanged(QQuickItem * escapeTarget);
+
 private slots:
     void onWindowChanged(QQuickWindow *window);
 
 private:
     void setHasCursor(bool hasCursor);
-    QList<CursorNavigationAttached*> &siblings();
+    //QList<CursorNavigationAttached*> &siblings();
 
     CursorNavigation *m_cursorNavigation;
     CursorNavigationAttached *m_parentNavigable;
@@ -57,6 +63,7 @@ private:
     bool m_trapsCursor;
 
     friend class CursorNavigation;
+    QQuickItem * m_escapeTarget;
 };
 
 #endif // CURSORNAVIGATIONATTACHED_H

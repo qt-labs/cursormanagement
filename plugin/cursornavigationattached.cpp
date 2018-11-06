@@ -8,7 +8,8 @@ CursorNavigationAttached::CursorNavigationAttached(QQuickItem *parent)
 m_cursorNavigation(nullptr),
 m_parentNavigable(nullptr),
 m_acceptsCursor(true),
-m_hasCursor(false)
+m_hasCursor(false),
+m_escapeTarget(nullptr)
 {
     if (parent)
         connect(parent, &QQuickItem::windowChanged, this, &CursorNavigationAttached::onWindowChanged);
@@ -82,6 +83,20 @@ QQuickItem *CursorNavigationAttached::item() const
     return static_cast<QQuickItem *>(parent());
 }
 
+QQuickItem *CursorNavigationAttached::escapeTarget() const
+{
+    return m_escapeTarget;
+}
+
+void CursorNavigationAttached::setEscapeTarget(QQuickItem *escapeTarget)
+{
+    if (m_escapeTarget == escapeTarget)
+        return;
+
+    m_escapeTarget = escapeTarget;
+    emit escapeTargetChanged(m_escapeTarget);
+}
+
 void CursorNavigationAttached::setHasCursor(bool hasCursor)
 {
     if (hasCursor != m_hasCursor) {
@@ -90,7 +105,7 @@ void CursorNavigationAttached::setHasCursor(bool hasCursor)
     }
 }
 
-QList<CursorNavigationAttached *> &CursorNavigationAttached::siblings()
+/*QList<CursorNavigationAttached *> &CursorNavigationAttached::siblings()
 {
     return m_parentNavigable->m_children;
-}
+}*/

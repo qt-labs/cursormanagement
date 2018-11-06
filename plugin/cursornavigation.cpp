@@ -9,33 +9,26 @@ const char CursorNavigation::windowPropertyName[] = "cursor_navigation";
 CursorNavigation::CursorNavigation(QQuickWindow *parent)
 :QObject(parent)
 ,m_window(parent)
-,m_inputAdapter(parent, this)
+,m_inputAdapter(m_window->contentItem(), this)
 ,m_currentItem(nullptr)
-,m_rootItem(nullptr)
+,m_rootItem(new CursorNavigationAttached(nullptr))
 {
+    m_rootItem->setParent(m_window->contentItem());
+
     m_algorithms.push_back(new SpatialNavigation4Dir());
 
     connect(m_window, &QQuickWindow::activeFocusItemChanged, this, &CursorNavigation::onActiveFocusItemChanged);
     onActiveFocusItemChanged();
 }
 
-bool CursorNavigation::inputCommand(CursorNavigationCommand cmd)
+bool CursorNavigation::inputCommand(const CursorNavigationCommand &cmd)
 {
-    CursorNavigationAttached *nextItem = nullptr;
 
-    QList<CursorNavigationAttached*> &candidates = m_currentItem ?
-                                m_currentItem->m_parentNavigable->m_children :
-                                m_rootItem.m_children;
-
-    for (auto alg : m_algorithms) {
-        nextItem = alg->getNextCandidate(candidates, m_currentItem, cmd);
-        if (nextItem) {
-            setCursorOnItem(nextItem);
-            break;
-        }
+    if (cmd.action == CursorNavigationCommand::NoAction) {
+        return handleDirectionCommand(cmd);
+    } else {
+        return handleActionCommand(cmd);
     }
-
-    return true;
 }
 
 CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *object)
@@ -96,7 +89,8 @@ void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
         if (item) {
             item->setHasCursor(true);
             m_currentItem = item;
-            m_currentItem->item()->setFocus(true);
+            m_currentItem->item()->forceActiveFocus();
+            //m_currentItem->item()->setFocus(true);
             qWarning() << "Set cursor to " << item->item();
         } else {
             qWarning() << "Set cursor to NULL";
@@ -130,8 +124,8 @@ void CursorNavigation::registerItem(CursorNavigationAttached* item)
         item->m_parentNavigable=parentCNA;
         parentCNA->m_children.append(item);
     } else {
-        m_rootItem.m_children.append(item);
-        item->m_parentNavigable=&m_rootItem;
+        m_rootItem->m_children.append(item);
+        item->m_parentNavigable=m_rootItem;
     }
 }
 
@@ -143,5 +137,65 @@ void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
 
     if (item->m_parentNavigable)
         item->m_parentNavigable->m_children.removeOne(item);
+}
+
+bool CursorNavigation::handleDirectionCommand(const CursorNavigationCommand &cmd)
+{
+    qWarning() << "handleDirectionCommand";
+    CursorNavigationAttached *nextItem = nullptr;
+
+    QList<CursorNavigationAttached*> &candidates = m_currentItem ?
+                                m_currentItem->m_parentNavigable->m_children :
+                                m_rootItem->m_children;
+
+    for (auto alg : m_algorithms) {
+        nextItem = alg->getNextCandidate(candidates, m_currentItem, cmd);
+        if (nextItem) {
+            setCursorOnItem(nextItem);
+            break;
+        }
+    }
+
+    return true;
+}
+
+bool CursorNavigation::handleActionCommand(const CursorNavigationCommand &cmd)
+{
+    qWarning() << "handleActionCommand, cmd.action= " << cmd.action;
+    switch (cmd.action) {
+        case CursorNavigationCommand::Forward:
+        break;
+        case CursorNavigationCommand::Back:
+        break;
+        case CursorNavigationCommand::Activate:
+        break;
+        case CursorNavigationCommand::Escape: {
+            /* if item has escapeTrgate defined, set focus to that. otherwise leave
+             * scope, ie. go back to parent's parent in the hierarchy and set focus
+             * (back) to it (setting the focus further to one of its children
+             * depends on the focus mechanism).
+             * if we are already at the root item's children, nothing happens
+             */
+            if (!m_currentItem)
+                break;
+
+            QQuickItem *escapeTarget = m_currentItem->m_parentNavigable->escapeTarget();
+            if (!escapeTarget) {
+                if (m_currentItem->m_parentNavigable == m_rootItem) {
+                    break;
+                }
+                escapeTarget = m_currentItem->m_parentNavigable->m_parentNavigable->item();
+            }
+            qWarning() << "escaping, target = " << escapeTarget;
+            setCursorOnItem(nullptr);
+            escapeTarget->forceActiveFocus();
+            onActiveFocusItemChanged();
+            //escapeTarget->setFocus(true);
+            break;
+        }
+
+        default:
+        break;
+    }
 }
 

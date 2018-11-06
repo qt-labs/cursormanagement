@@ -12,7 +12,6 @@ SOURCES += \
         plugin.cpp \
     cursornavigation.cpp \
     cursornavigationattached.cpp \
-    itemregister.cpp \
     inputadapter.cpp \
     cursornavigationalgorithm.cpp \
     spatialnavigation4dir.cpp \
@@ -22,7 +21,6 @@ HEADERS += \
         plugin.h \
     cursornavigation.h \
     cursornavigationattached.h \
-    itemregister.h \
     inputadapter.h \
     inputtypes.h \
     cursornavigationalgorithm.h \

@@ -1,5 +1,4 @@
 #include "cursornavigationalgorithm.h"
-#include "itemregister.h"
 
 CursorNavigationAlgorithm::CursorNavigationAlgorithm()
 {

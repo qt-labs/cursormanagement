@@ -5,8 +5,8 @@ import CursorNavigation 1.0
 ApplicationWindow {
     id: window
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     title: qsTr("Stack")
 
     header: ToolBar {
@@ -52,6 +52,14 @@ ApplicationWindow {
                 width: parent.width
                 onClicked: {
                     stackView.push("Page2Form.qml")
+                    drawer.close()
+                }
+            }
+            ItemDelegate {
+                text: qsTr("Page 3")
+                width: parent.width
+                onClicked: {
+                    stackView.push("Page3Form.qml")
                     drawer.close()
                 }
             }
