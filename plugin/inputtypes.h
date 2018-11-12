@@ -19,6 +19,8 @@ struct CursorNavigationCommand
 
     CursorNavigationCommand(float magnitude, int angle);
 
+    CursorNavigationCommand(Action a);
+
     //test if this commands angle is between given angles. clockwise from begin to end
     bool angleIsBetween(int begin, int end) const;
 

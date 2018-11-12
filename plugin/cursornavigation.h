@@ -20,8 +20,6 @@ public:
     CursorNavigation(QQuickWindow *parent);
 
     bool inputCommand(const CursorNavigationCommand &cmd);
-    void move(QVector2D moveVector);
-    void action();
 
     static CursorNavigationAttached *qmlAttachedProperties(QObject *object);
 
@@ -46,7 +44,7 @@ private:
     QList<CursorNavigationAlgorithm*> m_algorithms;
     //a root item that is not tied to any actual QQuickItem
     CursorNavigationAttached *m_rootItem;
-    QStack<CursorNavigationAttached*> m_scopeStack;
+    //QStack<CursorNavigationAttached*> m_scopeStack;
 
     friend class CursorNavigationAttached;
 };

@@ -59,6 +59,65 @@ void CursorNavigationAttached::setTrapsCursor(bool trapsCursor)
     }
 }
 
+void CursorNavigationAttached::setEscapeTarget(QQuickItem *escapeTarget)
+{
+    if (m_escapeTarget == escapeTarget)
+        return;
+
+    m_escapeTarget = escapeTarget;
+    emit escapeTargetChanged(m_escapeTarget);
+}
+
+void CursorNavigationAttached::move(int angle, float magnitude)
+{
+    CursorNavigationCommand cmd(magnitude, angle);
+    m_cursorNavigation->inputCommand(cmd);
+}
+
+void CursorNavigationAttached::moveUp()
+{
+    m_cursorNavigation->inputCommand(CursorNavigationCommand::Up);
+}
+
+void CursorNavigationAttached::moveDown()
+{
+    m_cursorNavigation->inputCommand(CursorNavigationCommand::Down);
+}
+
+void CursorNavigationAttached::moveRight()
+{
+    m_cursorNavigation->inputCommand(CursorNavigationCommand::Right);
+}
+
+void CursorNavigationAttached::moveLeft()
+{
+    m_cursorNavigation->inputCommand(CursorNavigationCommand::Left);
+}
+
+void CursorNavigationAttached::activate()
+{
+    CursorNavigationCommand cmd(CursorNavigationCommand::Activate);
+    m_cursorNavigation->inputCommand(cmd);
+}
+
+void CursorNavigationAttached::forward()
+{
+    CursorNavigationCommand cmd(CursorNavigationCommand::Forward);
+    m_cursorNavigation->inputCommand(cmd);
+}
+
+void CursorNavigationAttached::back()
+{
+    CursorNavigationCommand cmd(CursorNavigationCommand::Back);
+    m_cursorNavigation->inputCommand(cmd);
+}
+
+void CursorNavigationAttached::escape()
+{
+    CursorNavigationCommand cmd(CursorNavigationCommand::Escape);
+    m_cursorNavigation->inputCommand(cmd);
+}
+
 void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
 {
     qDebug() << "window changed, window = " << window;
@@ -86,15 +145,6 @@ QQuickItem *CursorNavigationAttached::item() const
 QQuickItem *CursorNavigationAttached::escapeTarget() const
 {
     return m_escapeTarget;
-}
-
-void CursorNavigationAttached::setEscapeTarget(QQuickItem *escapeTarget)
-{
-    if (m_escapeTarget == escapeTarget)
-        return;
-
-    m_escapeTarget = escapeTarget;
-    emit escapeTargetChanged(m_escapeTarget);
 }
 
 void CursorNavigationAttached::setHasCursor(bool hasCursor)

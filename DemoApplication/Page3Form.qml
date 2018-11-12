@@ -58,6 +58,13 @@ Item {
                     anchors.fill: parent
                     CursorNavigation.escapeTarget: defaultButton
 
+                    //redefine the controls for this scope
+                    //(default arrow keys will still work as well, unless reassigned here)
+                    Keys.onDigit5Pressed: CursorNavigation.moveUp()
+                    Keys.onDigit2Pressed: CursorNavigation.moveDown()
+                    Keys.onDigit3Pressed: CursorNavigation.moveRight()
+                    Keys.onDigit1Pressed: CursorNavigation.moveLeft()
+
                     Grid {
                         spacing: 5
                         columns: 2

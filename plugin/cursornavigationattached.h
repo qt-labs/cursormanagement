@@ -40,6 +40,17 @@ public slots:
     void setTrapsCursor(bool trapsCursor);
     void setEscapeTarget(QQuickItem * escapeTarget);
 
+    void move(int angle, float magnitude);
+    void moveUp();
+    void moveDown();
+    void moveRight();
+    void moveLeft();
+    void activate();
+    void forward();
+    void back();
+    void escape();
+
+
 signals:
     void acceptsCursorChanged(bool acceptsCursor);
     void hasCursorChanged(bool hasCursor);

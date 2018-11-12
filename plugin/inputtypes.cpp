@@ -13,6 +13,10 @@ CursorNavigationCommand::CursorNavigationCommand(float magnitude, int angle)
     :magnitude(magnitude), angle(angle), action(NoAction)
 {}
 
+CursorNavigationCommand::CursorNavigationCommand(Action a)
+    :magnitude(-1), angle(-1), action(a)
+{}
+
 //test if this commands angle is between given angles. clockwise from begin to end
 bool CursorNavigationCommand::angleIsBetween(int begin, int end) const
 {
