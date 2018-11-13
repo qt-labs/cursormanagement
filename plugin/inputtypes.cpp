@@ -1,27 +1,42 @@
 #include "inputtypes.h"
+#include <QtMath>
 
-const CursorNavigationCommand CursorNavigationCommand::Up(1.0, 270.0);
-const CursorNavigationCommand CursorNavigationCommand::Down(1.0, 90.0);
-const CursorNavigationCommand CursorNavigationCommand::Left(1.0, 180.0);
-const CursorNavigationCommand CursorNavigationCommand::Right(1.0, 0.0);
+const CursorNavigationCommand CursorNavigationCommand::Up(-M_PI_2, 0);
+const CursorNavigationCommand CursorNavigationCommand::Down(M_PI_2, 0);
+const CursorNavigationCommand CursorNavigationCommand::Left(M_PI, 0);
+const CursorNavigationCommand CursorNavigationCommand::Right(0, 0);
 
 CursorNavigationCommand::CursorNavigationCommand()
-    :magnitude(-1), angle(-1), action(NoAction)
+    :angle(-1), angleTolerance(-1), action(NoAction)
 {}
 
-CursorNavigationCommand::CursorNavigationCommand(float magnitude, int angle)
-    :magnitude(magnitude), angle(angle), action(NoAction)
+CursorNavigationCommand::CursorNavigationCommand(qreal a, qreal tolerance)
+    :angle(CursorNavigationCommand::fitAngle(a)), angleTolerance(tolerance), action(NoAction)
 {}
 
 CursorNavigationCommand::CursorNavigationCommand(Action a)
-    :magnitude(-1), angle(-1), action(a)
+    :angle(-1), angleTolerance(-1), action(a)
 {}
 
 //test if this commands angle is between given angles. clockwise from begin to end
-bool CursorNavigationCommand::angleIsBetween(int begin, int end) const
+//bool CursorNavigationCommand::angleIsBetween(qreal begin, qreal end)
+//{
+//    return CursorNavigationCommand::angleIsBetween(this->angle, begin, end);
+//}
+
+bool CursorNavigationCommand::angleIsBetween(qreal angle, qreal begin, qreal end)
 {
     if (begin > end)
         return angle >= begin || angle <= end;
     else
         return angle >= begin && angle <= end;
+}
+
+qreal CursorNavigationCommand::fitAngle(qreal angle)
+{
+    if (angle > M_PI)
+        return -M_PI + std::fmod(angle ,M_PI);
+    else if (angle < -M_PI)
+        return M_PI + std::fmod(angle ,M_PI);
+    return angle;
 }

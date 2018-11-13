@@ -24,6 +24,11 @@ ApplicationWindow {
         }
         CNTabButton {
             text: qsTr("Page 3")
+
+        }
+        CNTabButton {
+            text: qsTr("Page 4")
+
         }
     }
 
@@ -33,5 +38,6 @@ ApplicationWindow {
         Page1 { }
         Page2 { }
         Page3 { }
+        Page4 { }
     }
 }

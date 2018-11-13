@@ -40,7 +40,8 @@ public slots:
     void setTrapsCursor(bool trapsCursor);
     void setEscapeTarget(QQuickItem * escapeTarget);
 
-    void move(int angle, float magnitude);
+    void move(qreal angle, qreal tolerance = 0);
+    void move(QVector2D vector, qreal tolerance = 0);
     void moveUp();
     void moveDown();
     void moveRight();

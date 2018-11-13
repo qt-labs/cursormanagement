@@ -68,54 +68,56 @@ void CursorNavigationAttached::setEscapeTarget(QQuickItem *escapeTarget)
     emit escapeTargetChanged(m_escapeTarget);
 }
 
-void CursorNavigationAttached::move(int angle, float magnitude)
+void CursorNavigationAttached::move(qreal angle, qreal tolerance)
 {
-    CursorNavigationCommand cmd(magnitude, angle);
-    m_cursorNavigation->inputCommand(cmd);
+    qWarning() << "move";
+    m_cursorNavigation->move(angle, tolerance, false);
+}
+
+void CursorNavigationAttached::move(QVector2D vector, qreal tolerance)
+{
+    qWarning() << "move";
+    m_cursorNavigation->move(vector, tolerance, false);
 }
 
 void CursorNavigationAttached::moveUp()
 {
-    m_cursorNavigation->inputCommand(CursorNavigationCommand::Up);
+    m_cursorNavigation->move(-90, 0, true);
 }
 
 void CursorNavigationAttached::moveDown()
 {
-    m_cursorNavigation->inputCommand(CursorNavigationCommand::Down);
+    m_cursorNavigation->move(90, 0, true);
 }
 
 void CursorNavigationAttached::moveRight()
 {
-    m_cursorNavigation->inputCommand(CursorNavigationCommand::Right);
+    m_cursorNavigation->move(0, 0, true);
 }
 
 void CursorNavigationAttached::moveLeft()
 {
-    m_cursorNavigation->inputCommand(CursorNavigationCommand::Left);
+    m_cursorNavigation->move(180, 0, true);
 }
 
 void CursorNavigationAttached::activate()
 {
-    CursorNavigationCommand cmd(CursorNavigationCommand::Activate);
-    m_cursorNavigation->inputCommand(cmd);
+    m_cursorNavigation->action(Activate);
 }
 
 void CursorNavigationAttached::forward()
 {
-    CursorNavigationCommand cmd(CursorNavigationCommand::Forward);
-    m_cursorNavigation->inputCommand(cmd);
+    m_cursorNavigation->action(Forward);
 }
 
 void CursorNavigationAttached::back()
 {
-    CursorNavigationCommand cmd(CursorNavigationCommand::Back);
-    m_cursorNavigation->inputCommand(cmd);
+    m_cursorNavigation->action(Back);
 }
 
 void CursorNavigationAttached::escape()
 {
-    CursorNavigationCommand cmd(CursorNavigationCommand::Escape);
-    m_cursorNavigation->inputCommand(cmd);
+    m_cursorNavigation->action(Escape);
 }
 
 void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
@@ -155,7 +157,3 @@ void CursorNavigationAttached::setHasCursor(bool hasCursor)
     }
 }
 
-/*QList<CursorNavigationAttached *> &CursorNavigationAttached::siblings()
-{
-    return m_parentNavigable->m_children;
-}*/

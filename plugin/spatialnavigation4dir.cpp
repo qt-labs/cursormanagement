@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <functional>
+#include <QtMath>
 
 //we only compare distances to eachother so no need to calculate expensive
 //square roots. centerpoint comparison is just enough for now too
@@ -53,14 +54,21 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
 
     //NOTICE: overlapping candidates will be ignored for now (TODO, this needs to be changed)
 
-    if (cmd.angleIsBetween(315, 45) || cmd.angleIsBetween(135, 225) ) {
+    qreal right_start = -M_PI_4;
+    qreal right_end = M_PI_4;
+    qreal left_start = M_PI-M_PI_4;
+    qreal left_end = -M_PI+M_PI_4;
+
+
+    if (CursorNavigationCommand::angleIsBetween(cmd.angle, right_start, right_end) ||
+        CursorNavigationCommand::angleIsBetween(cmd.angle, left_start, left_end) ) {
     //if (cmd == CursorNavigationCommand::Right || cmd == CursorNavigationCommand::Left) {
 
         isInProjection = [&currentItemSceneRect](const QRectF &itemRect) {
             return !( currentItemSceneRect.y() > itemRect.y()+itemRect.height() ||
                       currentItemSceneRect.y()+currentItemSceneRect.height() < itemRect.y() );
         };
-        if (cmd.angleIsBetween(315, 45)) {
+        if (CursorNavigationCommand::angleIsBetween(cmd.angle, right_start, right_end)) {
         //if (cmd == Command_Right) {
             isInDirection = [&currentItemSceneRect](const QRectF &itemRect) {
                 return currentItemSceneRect.x()+currentItemSceneRect.width() <= itemRect.x();
@@ -71,13 +79,14 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
             };
         }
 
-    } else if (cmd.angleIsBetween(225, 315) || cmd.angleIsBetween(45, 135)) {
+    } else if (CursorNavigationCommand::angleIsBetween(cmd.angle, left_end, right_start) ||
+               CursorNavigationCommand::angleIsBetween(cmd.angle, right_end, left_start)) {
     //} else if (cmd == Command_Up || cmd == Command_Down) {
         isInProjection = [&currentItemSceneRect](const QRectF &itemRect) {
             return !( currentItemSceneRect.x() > itemRect.x()+itemRect.width() ||
                       currentItemSceneRect.x()+currentItemSceneRect.width() < itemRect.x() );
         };
-        if (cmd.angleIsBetween(45, 135)) {
+        if (CursorNavigationCommand::angleIsBetween(cmd.angle, right_end, left_start)) {
         //if (cmd == Command_Down) {
             isInDirection = [&currentItemSceneRect](const QRectF &itemRect) {
                 return currentItemSceneRect.y()+currentItemSceneRect.height() <= itemRect.y();

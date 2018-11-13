@@ -15,7 +15,8 @@ SOURCES += \
     inputadapter.cpp \
     cursornavigationalgorithm.cpp \
     spatialnavigation4dir.cpp \
-    inputtypes.cpp
+    inputtypes.cpp \
+    spatialnavigation360.cpp
 
 HEADERS += \
         plugin.h \
@@ -24,7 +25,8 @@ HEADERS += \
     inputadapter.h \
     inputtypes.h \
     cursornavigationalgorithm.h \
-    spatialnavigation4dir.h
+    spatialnavigation4dir.h \
+    spatialnavigation360.h
 
 pluginfiles.files += qmldir
 

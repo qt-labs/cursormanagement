@@ -38,36 +38,36 @@ bool InputAdapter::handleKeyEvent(QKeyEvent *event)
     switch (event->key())
     {
     case Qt::Key_Left:
-        cmd = CursorNavigationCommand::Left;
+        m_cursorNavigation->move(180, 0, true);
         break;
     case Qt::Key_Right:
-        cmd = CursorNavigationCommand::Right;
+        m_cursorNavigation->move(0, 0, true);
         break;
     case Qt::Key_Up:
-        cmd = CursorNavigationCommand::Up;
+        m_cursorNavigation->move(270, 0, true);
         break;
     case Qt::Key_Down:
-        cmd = CursorNavigationCommand::Down;
+        m_cursorNavigation->move(90, 0, true);
         break;
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        cmd.action = CursorNavigationCommand::Activate;
+        m_cursorNavigation->action(Activate);
         break;
     case Qt::BackButton:
     case Qt::Key_Escape:
-        cmd.action = CursorNavigationCommand::Escape;
+        m_cursorNavigation->action(Escape);
         break;
     case Qt::Key_Tab:
-        cmd.action = CursorNavigationCommand::Forward;
+        m_cursorNavigation->action(Forward);
         break;
     case Qt::Key_Backtab:
-        cmd.action = CursorNavigationCommand::Back;
+        m_cursorNavigation->action(Back);
         break;
     default:
         return false;
     }
 
-    return m_cursorNavigation->inputCommand(cmd);
+    return true;
 }
 
 bool InputAdapter::handleMouseEvent(QMouseEvent *event)

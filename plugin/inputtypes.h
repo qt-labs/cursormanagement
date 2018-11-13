@@ -1,37 +1,44 @@
 #ifndef INPUTTYPES_H
 #define INPUTTYPES_H
 
+#include <QtGlobal>
+
 //TODO: make these into classes w accessors
+
+enum Action
+{
+    NoAction,
+    Forward,    //tab
+    Back,       //ctrl-tab
+    Activate,   //enter/click on item
+    Escape      //leave scope
+};
 
 //generic of way of describing the input that cursor management can handle
 struct CursorNavigationCommand
 {
-    enum Action
-    {
-        NoAction,
-        Forward,    //tab
-        Back,       //ctrl-tab
-        Activate,   //enter/click on item
-        Escape      //leave scope
-    };
-
     CursorNavigationCommand();
 
-    CursorNavigationCommand(float magnitude, int angle);
+    CursorNavigationCommand(qreal angle, qreal tolerance);
 
     CursorNavigationCommand(Action a);
 
-    //test if this commands angle is between given angles. clockwise from begin to end
-    bool angleIsBetween(int begin, int end) const;
+    //bool angleIsBetween(qreal begin, qreal end);
 
-    float magnitude;    //0.0 to 1.0
-    int angle;          //0 to 359
+    qreal angle;          //-pi to pi
+    qreal angleTolerance;  //0 to pi
     Action action;
 
     static const CursorNavigationCommand Up;
     static const CursorNavigationCommand Down;
     static const CursorNavigationCommand Left;
     static const CursorNavigationCommand Right;
+
+    //test if given angle is between given sector. sector defined clockwise from begin to end
+    static bool angleIsBetween(qreal angle, qreal begin, qreal end);
+
+    //fit the given angle to be between -pi and pi
+    static qreal fitAngle(qreal angle);
 
 };
 
@@ -59,7 +66,7 @@ class CursorNavigationFeedback
 {
 //    Q_GADGET
 //    Q_PROPERTY(CommandResult READ commandResult NOTIFY commandResultChanged )
-//    Q_PROPERTY(CommandResult READ commandResult NOTIFY commandResultChanged )
+//    Q_PROPERTY(Boundary READ boundary NOTIFY boundaryChanged )
 
     //feedback cases;
     //-cmd succesfull

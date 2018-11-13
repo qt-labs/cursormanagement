@@ -3,6 +3,7 @@
 #include "spatialnavigation4dir.h"
 #include <QQuickWindow>
 #include <QQuickItem>
+#include <QtMath>
 
 const char CursorNavigation::windowPropertyName[] = "cursor_navigation";
 
@@ -15,13 +16,71 @@ CursorNavigation::CursorNavigation(QQuickWindow *parent)
 {
     m_rootItem->setParent(m_window->contentItem());
 
-    m_algorithms.push_back(new SpatialNavigation4Dir());
+    //m_algorithms.push_back(new SpatialNavigation4Dir());
 
     connect(m_window, &QQuickWindow::activeFocusItemChanged, this, &CursorNavigation::onActiveFocusItemChanged);
     onActiveFocusItemChanged();
 }
 
-bool CursorNavigation::inputCommand(const CursorNavigationCommand &cmd)
+void CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
+{
+    qreal a = qDegreesToRadians(angle);
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+    qWarning() << "move, angle = " << a << " tolerance = " << t << " discrete = " << discrete;
+    CursorNavigationCommand cmd(a, t);
+    handleMove(cmd, discrete);
+}
+
+void CursorNavigation::move(const QVector2D& vector, qreal tolerance, bool discrete)
+{
+    qreal angle = qAtan2(vector.y(), vector.x());
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+    qWarning() << "move(vector2d), angle = " << angle << " tolerance = " << t << " discrete = " << discrete;
+    CursorNavigationCommand cmd(angle, tolerance);
+    handleMove(cmd, discrete);
+}
+
+void CursorNavigation::action(Action action)
+{
+    qWarning() << "handleActionCommand, action= " << action;
+    switch (action) {
+        case Forward:
+        break;
+        case Back:
+        break;
+        case Activate:
+        break;
+        case Escape: {
+            /* if item has escapeTrgate defined, set focus to that. otherwise leave
+             * scope, ie. go back to parent's parent in the hierarchy and set focus
+             * (back) to it (setting the focus further to one of its children
+             * depends on the focus mechanism).
+             * if we are already at the root item's children, nothing happens
+             */
+            if (!m_currentItem)
+                break;
+
+            QQuickItem *escapeTarget = m_currentItem->m_parentNavigable->escapeTarget();
+            if (!escapeTarget) {
+                if (m_currentItem->m_parentNavigable == m_rootItem) {
+                    break;
+                }
+                escapeTarget = m_currentItem->m_parentNavigable->m_parentNavigable->item();
+            }
+            qWarning() << "escaping, target = " << escapeTarget;
+            setCursorOnItem(nullptr);
+            escapeTarget->forceActiveFocus();
+            onActiveFocusItemChanged();
+            //escapeTarget->setFocus(true);
+            break;
+        }
+
+        default:
+        break;
+    }
+}
+
+/*bool CursorNavigation::inputCommand(const CursorNavigationCommand &cmd)
 {
 
     if (cmd.action == CursorNavigationCommand::NoAction) {
@@ -29,7 +88,7 @@ bool CursorNavigation::inputCommand(const CursorNavigationCommand &cmd)
     } else {
         return handleActionCommand(cmd);
     }
-}
+}*/
 
 CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *object)
 {
@@ -139,7 +198,7 @@ void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
         item->m_parentNavigable->m_children.removeOne(item);
 }
 
-bool CursorNavigation::handleDirectionCommand(const CursorNavigationCommand &cmd)
+bool CursorNavigation::handleMove(const CursorNavigationCommand &cmd, bool discrete)
 {
     qWarning() << "handleDirectionCommand";
     CursorNavigationAttached *nextItem = nullptr;
@@ -148,54 +207,24 @@ bool CursorNavigation::handleDirectionCommand(const CursorNavigationCommand &cmd
                                 m_currentItem->m_parentNavigable->m_children :
                                 m_rootItem->m_children;
 
-    for (auto alg : m_algorithms) {
+    if (discrete) {
+        nextItem = m_navigation4Dir.getNextCandidate(candidates, m_currentItem, cmd);
+    } else {
+        nextItem = m_navigation360.getNextCandidate(candidates, m_currentItem, cmd);
+    }
+
+    if (nextItem) {
+        setCursorOnItem(nextItem);
+    }
+
+/*    for (auto alg : m_algorithms) {
         nextItem = alg->getNextCandidate(candidates, m_currentItem, cmd);
         if (nextItem) {
             setCursorOnItem(nextItem);
             break;
         }
-    }
+    }*/
 
     return true;
-}
-
-bool CursorNavigation::handleActionCommand(const CursorNavigationCommand &cmd)
-{
-    qWarning() << "handleActionCommand, cmd.action= " << cmd.action;
-    switch (cmd.action) {
-        case CursorNavigationCommand::Forward:
-        break;
-        case CursorNavigationCommand::Back:
-        break;
-        case CursorNavigationCommand::Activate:
-        break;
-        case CursorNavigationCommand::Escape: {
-            /* if item has escapeTrgate defined, set focus to that. otherwise leave
-             * scope, ie. go back to parent's parent in the hierarchy and set focus
-             * (back) to it (setting the focus further to one of its children
-             * depends on the focus mechanism).
-             * if we are already at the root item's children, nothing happens
-             */
-            if (!m_currentItem)
-                break;
-
-            QQuickItem *escapeTarget = m_currentItem->m_parentNavigable->escapeTarget();
-            if (!escapeTarget) {
-                if (m_currentItem->m_parentNavigable == m_rootItem) {
-                    break;
-                }
-                escapeTarget = m_currentItem->m_parentNavigable->m_parentNavigable->item();
-            }
-            qWarning() << "escaping, target = " << escapeTarget;
-            setCursorOnItem(nullptr);
-            escapeTarget->forceActiveFocus();
-            onActiveFocusItemChanged();
-            //escapeTarget->setFocus(true);
-            break;
-        }
-
-        default:
-        break;
-    }
 }
 
