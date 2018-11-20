@@ -1,61 +1,58 @@
 import QtQuick 2.0
+
 import CursorNavigation 1.0
+import "../controls"
 
 Item {
+    width: parent.width
+    height: parent.height
+
     FocusScope {
         id: rootScope
+        anchors.fill: parent
         Row {
+            anchors.centerIn: parent
             spacing: 10
-
             CNButton {
                 width: 100
                 height: 100
                 text: "alone!"
             }
 
-            Rectangle {
+            Grid {
+                columns: 2
+                rows: 2
+                spacing: 5
 
-                width: 250
-                height: 200
-
-                Grid {
-                    spacing: 5
-                    columns: 2
-                    rows: 2
-
-                    CNButton {
-                        text: "b1"
-                    }
-
-                    CNButton {
-                        text: "b2 (default focus)"
-                        focus: true
-                    }
-
-                    CNButton {
-                        id: defaultButton
-                        text: "b3 (escape target)"
-                    }
-
-                    CNButton {
-                        text: "b4"
-                    }
-
+                CNButton {
+                    text: "b1"
                 }
 
+                CNButton {
+                    text: "b2 (default focus)"
+                    focus: true
+                }
+
+                CNButton {
+                    id: defaultButton
+                    text: "b3 (escape target)"
+                }
+
+                CNButton {
+                    text: "b4"
+                }
             }
 
             Rectangle {
-
                 width: 250
                 height: 200
 
                 border.width: 2
-                border.color: "gray"
+                border.color: "grey"
 
                 FocusScope {
-                    CursorNavigation.acceptsCursor: true
                     anchors.fill: parent
+                    CursorNavigation.acceptsCursor: true
                     CursorNavigation.escapeTarget: defaultButton
 
                     //redefine the controls for this scope
@@ -86,11 +83,11 @@ Item {
                             text: "sb4 (default focus)"
                             focus: true
                         }
-
                     }
                 }
-
             }
         }
+        //this seems to be the way to force focus on a newly opened dialog?
+        Component.onCompleted: { forceActiveFocus(); }
     }
 }

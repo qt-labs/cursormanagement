@@ -1,74 +1,39 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
+
 import CursorNavigation 1.0
+import "pages"
 
 ApplicationWindow {
     id: window
-    visible: true
     width: 800
     height: 600
-    title: qsTr("Stack")
+    visible: true
+    title: qsTr("Cursor Navigation Demo Application")
 
-    header: ToolBar {
-        contentHeight: toolButton.implicitHeight
-
-        ToolButton {
-            id: toolButton
-            text: stackView.depth > 1 ? "\u25C0" : "\u2630"
-            font.pixelSize: Qt.application.font.pixelSize * 1.6
-            onClicked: {
-                if (stackView.depth > 1) {
-                    stackView.pop()
-                } else {
-                    drawer.open()
-                }
-            }
+    header: TabBar {
+        id: tabBar
+        width: parent.width
+        TabButton {
+            CursorNavigation.acceptsCursor: true
+            text: qsTr("Page 1")
         }
-
-        Label {
-            text: stackView.currentItem.title
-            anchors.centerIn: parent
+        TabButton {
+            CursorNavigation.acceptsCursor: true
+            text: qsTr("Page 2")
+        }
+        TabButton {
+            CursorNavigation.acceptsCursor: true
+            text: qsTr("Page 3")
         }
     }
 
-    Drawer {
-        id: drawer
-        width: window.width * 0.66
-        height: window.height
-
-        Column {
-            anchors.fill: parent
-
-            ItemDelegate {
-                text: qsTr("Page 1")
-                width: parent.width
-                onClicked: {
-                    stackView.push("Page1Form.qml")
-                    drawer.close()
-                }
-            }
-            ItemDelegate {
-                text: qsTr("Page 2")
-                width: parent.width
-                onClicked: {
-                    stackView.push("Page2Form.qml")
-                    drawer.close()
-                }
-            }
-            ItemDelegate {
-                text: qsTr("Page 3")
-                width: parent.width
-                onClicked: {
-                    stackView.push("Page3Form.qml")
-                    drawer.close()
-                }
-            }
-        }
-    }
-
-    StackView {
-        id: stackView
-        initialItem: "HomeForm.qml"
+    contentData: StackLayout {
         anchors.fill: parent
+        currentIndex: tabBar.currentIndex
+        Page1 { }
+        Page2 { }
+        Page3 { }
     }
 }
