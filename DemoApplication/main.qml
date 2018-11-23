@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 
 import CursorNavigation 1.0
 import "pages"
+import "controls"
 
 ApplicationWindow {
     id: window
@@ -15,16 +16,13 @@ ApplicationWindow {
     header: TabBar {
         id: tabBar
         width: parent.width
-        TabButton {
-            CursorNavigation.acceptsCursor: true
+        CNTabButton {
             text: qsTr("Page 1")
         }
-        TabButton {
-            CursorNavigation.acceptsCursor: true
+        CNTabButton {
             text: qsTr("Page 2")
         }
-        TabButton {
-            CursorNavigation.acceptsCursor: true
+        CNTabButton {
             text: qsTr("Page 3")
         }
     }
