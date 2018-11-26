@@ -12,10 +12,10 @@ SpatialNavigation360::SpatialNavigation360()
 //test if point is contained in at least one of the given quadrants
 bool isPointIncluded(const std::vector<bool> &q, const QPointF &p, const QPointF &o)
 {
-    return (q[0] && (p.x()-o.x()) >= 0 && (p.y()-o.y()) >= 0) ||
-           (q[1] && (p.x()-o.x()) >= 0 && (p.y()-o.y()) <  0) ||
-           (q[2] && (p.x()-o.x()) <  0 && (p.y()-o.y()) <  0) ||
-           (q[3] && (p.x()-o.x()) <  0 && (p.y()-o.y()) >= 0);
+    return (q[0] && (p.x() > o.x()) && (p.y() > o.y())) ||
+           (q[1] && (p.x() < o.x()) && (p.y() > o.y())) ||
+           (q[2] && (p.x() < o.x()) && (p.y() < o.y())) ||
+           (q[3] && (p.x() > o.x()) && (p.y() < o.y()));
 }
 
 //test if rect is contained in at least one of the given quadrants
@@ -115,7 +115,7 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
      * -remember to use current item's coord system as the reference!!!
      */
 
-    qWarning() << "##### navigation360: start, angle = " << cmd.angle;
+    qWarning() << "##### navigation360: start, angle = " << cmd.angle << " tolerance = " << cmd.angleTolerance;
 
     if (candidates.isEmpty())
         return nullptr;
@@ -129,29 +129,17 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
     std::vector<bool> quadrants(4);
 
     //define selector beam sector
-//    int angle1_deg, angle2_deg;
     qreal angle1, angle2;
 
     angle1 = CursorNavigationCommand::fitAngle(cmd.angle - cmd.angleTolerance);
     angle2 = CursorNavigationCommand::fitAngle(cmd.angle + cmd.angleTolerance);
-
-
-//    angle1_deg = (cmd.angle - cmd.angleTolerance) % 360;
-//    if (angle1_deg < 0)
-//        angle1_deg = 360 + angle1_deg;
-//    angle2_deg = (cmd.angle + cmd.angleTolerance) % 360;
-
-//    int a=angle2_deg-angle1_deg;
-//    while (a > 0) {
-//        quadrants[(angle1_deg/90+a/90) % 4] = true;
-//        a -= 90;
-//    }
 
     quadrants[0] = sectorsOverlap(angle1, angle2, 0, M_PI_2);
     quadrants[1] = sectorsOverlap(angle1, angle2, M_PI_2, M_PI);
     quadrants[2] = sectorsOverlap(angle1, angle2, -M_PI, -M_PI_2);
     quadrants[3] = sectorsOverlap(angle1, angle2, -M_PI_2, 0);
 
+    qWarning() << "navigation360: beam angles: " << angle1 << " , " << angle2;
     qWarning() << "navigation360: quadrants = " << quadrants;
 
     const QRectF currentItemSceneRect = currentItem->item()->mapRectToScene(
@@ -176,7 +164,7 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
         if (iter == currentItem || !iter->item()->isVisible() || !iter->item()->isEnabled())
             continue;
 
-        //if (isRectIncluded(quadrants, itemSceneRect, origin)) {
+        if (isRectIncluded(quadrants, itemSceneRect, origin)) {
 
             std::pair<qreal,qreal> sector = getSector(itemSceneRect, origin);
             qWarning() << "item " << iter->item() << " rect = " << itemSceneRect << " sector " << sector;
@@ -191,12 +179,12 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
             } else if (!directHitItem && sectorsOverlap(angle1, angle2, sector.first, sector.second)) {
                 qWarning() << "is within tolerances";
                 qreal dist = rectDistance(itemSceneRect, currentItemSceneRect);
-                if (dist < withinToleranceDistance) {
+                if (!withinToleranceItem || dist < withinToleranceDistance) {
                     withinToleranceDistance = dist;
                     withinToleranceItem = iter;
                 }
             }
-        //}
+        }
     }
 
     qWarning() << "##### end, directHit = " <<

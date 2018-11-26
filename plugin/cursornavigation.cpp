@@ -26,18 +26,14 @@ void CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
 {
     qreal a = qDegreesToRadians(angle);
     qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
-    qWarning() << "move, angle = " << a << " tolerance = " << t << " discrete = " << discrete;
-    CursorNavigationCommand cmd(a, t);
-    handleMove(cmd, discrete);
+    handleMove(a, t, discrete);
 }
 
 void CursorNavigation::move(const QVector2D& vector, qreal tolerance, bool discrete)
 {
-    qreal angle = qAtan2(vector.y(), vector.x());
+    qreal a = qAtan2(vector.y(), vector.x());
     qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
-    qWarning() << "move(vector2d), angle = " << angle << " tolerance = " << t << " discrete = " << discrete;
-    CursorNavigationCommand cmd(angle, tolerance);
-    handleMove(cmd, discrete);
+    handleMove(a, t, discrete);
 }
 
 void CursorNavigation::action(Action action)
@@ -79,16 +75,6 @@ void CursorNavigation::action(Action action)
         break;
     }
 }
-
-/*bool CursorNavigation::inputCommand(const CursorNavigationCommand &cmd)
-{
-
-    if (cmd.action == CursorNavigationCommand::NoAction) {
-        return handleDirectionCommand(cmd);
-    } else {
-        return handleActionCommand(cmd);
-    }
-}*/
 
 CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *object)
 {
@@ -198,10 +184,12 @@ void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
         item->m_parentNavigable->m_children.removeOne(item);
 }
 
-bool CursorNavigation::handleMove(const CursorNavigationCommand &cmd, bool discrete)
+bool CursorNavigation::handleMove(qreal angle, qreal tolerance, bool discrete)
 {
-    qWarning() << "handleDirectionCommand";
     CursorNavigationAttached *nextItem = nullptr;
+
+    qWarning() << "handleMove, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
+    CursorNavigationCommand cmd(angle, tolerance);
 
     QList<CursorNavigationAttached*> &candidates = m_currentItem ?
                                 m_currentItem->m_parentNavigable->m_children :

@@ -4,16 +4,23 @@ import QtGamepad 1.0
 import "../controls"
 
 Item {
-    CursorNavigation.acceptsCursor: true
+    //CursorNavigation.acceptsCursor: true
+
+    Timer {
+        id: cooldownTimer
+        interval: 500
+        repeat: false
+    }
 
     Gamepad {
         deviceId: GamepadManager.connectedGamepads.length > 0 ? GamepadManager.connectedGamepads[0] : -1
 
         function handleMove() {
             var v = Qt.vector2d(axisLeftX, axisLeftY)
-            if (v.length() >= 1) {
+            if (v.length() >= 0.99 && !cooldownTimer.running) {
                 //console.log("handle joystick move, v=" + v)
-                parent.CursorNavigation.move(Qt.vector2d(axisLeftX, axisLeftY))
+                parent.CursorNavigation.move(Qt.vector2d(axisLeftX, axisLeftY), 10)
+                cooldownTimer.start()
             }
         }
 
