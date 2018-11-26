@@ -1,7 +1,7 @@
 import QtQuick 2.9
 
 import CursorNavigation 1.0
-import "../controls"
+import controls 1.0
 
 Item {
     width: parent.width

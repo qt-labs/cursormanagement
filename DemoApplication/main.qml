@@ -3,8 +3,8 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 
 import CursorNavigation 1.0
+import controls 1.0
 import "pages"
-import "controls"
 
 ApplicationWindow {
     id: window
@@ -24,11 +24,12 @@ ApplicationWindow {
         }
         CNTabButton {
             text: qsTr("Page 3")
-
         }
         CNTabButton {
             text: qsTr("Page 4")
-
+        }
+        CNTabButton {
+            text: qsTr("Page 5")
         }
     }
 
@@ -39,5 +40,6 @@ ApplicationWindow {
         Page2 { }
         Page3 { }
         Page4 { }
+        Page5 { }
     }
 }
