@@ -80,6 +80,22 @@ void CursorNavigationAttached::move(QVector2D vector, qreal tolerance)
     m_cursorNavigation->move(vector, tolerance, false);
 }
 
+QQuickItem *CursorNavigationAttached::find(qreal angle, qreal tolerance)
+{
+    CursorNavigationAttached *item = m_cursorNavigation->find(angle, tolerance, false);
+    if (item)
+        return item->item();
+    return nullptr;
+}
+
+QQuickItem *CursorNavigationAttached::find(QVector2D vector, qreal tolerance)
+{
+    CursorNavigationAttached *item = m_cursorNavigation->find(vector, tolerance, false);
+    if (item)
+        return item->item();
+    return nullptr;
+}
+
 void CursorNavigationAttached::moveUp()
 {
     m_cursorNavigation->move(-90, 0, true);

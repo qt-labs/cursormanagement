@@ -26,14 +26,30 @@ void CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
 {
     qreal a = qDegreesToRadians(angle);
     qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
-    handleMove(a, t, discrete);
+    _move(a, t, discrete);
 }
 
 void CursorNavigation::move(const QVector2D& vector, qreal tolerance, bool discrete)
 {
     qreal a = qAtan2(vector.y(), vector.x());
     qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
-    handleMove(a, t, discrete);
+    _move(a, t, discrete);
+}
+
+CursorNavigationAttached *CursorNavigation::find(qreal angle, qreal tolerance, bool discrete)
+{
+    qreal a = qDegreesToRadians(angle);
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+
+    return _find(a,t,discrete);
+}
+
+CursorNavigationAttached *CursorNavigation::find(const QVector2D& vector, qreal tolerance, bool discrete)
+{
+    qreal a = qAtan2(vector.y(), vector.x());
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+
+    return _find(a,t,discrete);
 }
 
 void CursorNavigation::action(Action action)
@@ -47,7 +63,7 @@ void CursorNavigation::action(Action action)
         case Activate:
         break;
         case Escape: {
-            /* if item has escapeTrgate defined, set focus to that. otherwise leave
+            /* if item has escapeTarget defined, set focus to that. otherwise leave
              * scope, ie. go back to parent's parent in the hierarchy and set focus
              * (back) to it (setting the focus further to one of its children
              * depends on the focus mechanism).
@@ -184,11 +200,20 @@ void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
         item->m_parentNavigable->m_children.removeOne(item);
 }
 
-bool CursorNavigation::handleMove(qreal angle, qreal tolerance, bool discrete)
+void CursorNavigation::_move(qreal angle, qreal tolerance, bool discrete)
+{
+    CursorNavigationAttached *nextItem = _find(angle, tolerance, discrete);
+
+    if (nextItem) {
+        setCursorOnItem(nextItem);
+    }
+}
+
+CursorNavigationAttached *CursorNavigation::_find(qreal angle, qreal tolerance, bool discrete)
 {
     CursorNavigationAttached *nextItem = nullptr;
 
-    qWarning() << "handleMove, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
+    qWarning() << "find next item, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
     CursorNavigationCommand cmd(angle, tolerance);
 
     QList<CursorNavigationAttached*> &candidates = m_currentItem ?
@@ -201,18 +226,5 @@ bool CursorNavigation::handleMove(qreal angle, qreal tolerance, bool discrete)
         nextItem = m_navigation360.getNextCandidate(candidates, m_currentItem, cmd);
     }
 
-    if (nextItem) {
-        setCursorOnItem(nextItem);
-    }
-
-/*    for (auto alg : m_algorithms) {
-        nextItem = alg->getNextCandidate(candidates, m_currentItem, cmd);
-        if (nextItem) {
-            setCursorOnItem(nextItem);
-            break;
-        }
-    }*/
-
-    return true;
+    return nextItem;
 }
-

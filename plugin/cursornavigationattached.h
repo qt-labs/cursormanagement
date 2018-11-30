@@ -42,6 +42,11 @@ public slots:
 
     void move(qreal angle, qreal tolerance = 0);
     void move(QVector2D vector, qreal tolerance = 0);
+
+    //find the next item with this move, without moving
+    QQuickItem *find(qreal angle, qreal tolerance = 0);
+    QQuickItem *find(QVector2D vector, qreal tolerance = 0);
+
     void moveUp();
     void moveDown();
     void moveRight();

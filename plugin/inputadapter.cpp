@@ -44,7 +44,7 @@ bool InputAdapter::handleKeyEvent(QKeyEvent *event)
         m_cursorNavigation->move(0, 0, true);
         break;
     case Qt::Key_Up:
-        m_cursorNavigation->move(270, 0, true);
+        m_cursorNavigation->move(-90, 0, true);
         break;
     case Qt::Key_Down:
         m_cursorNavigation->move(90, 0, true);

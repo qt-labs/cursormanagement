@@ -12,6 +12,14 @@ Item {
         repeat: false
     }
 
+    Rectangle {
+        id: pointerRect
+        border.color: "orange"
+        border.width: 1
+        visible: false
+        color: "transparent"
+    }
+
     Gamepad {
         deviceId: GamepadManager.connectedGamepads.length > 0 ? GamepadManager.connectedGamepads[0] : -1
 
@@ -21,6 +29,18 @@ Item {
                 //console.log("handle joystick move, v=" + v)
                 parent.CursorNavigation.move(Qt.vector2d(axisLeftX, axisLeftY), 10)
                 cooldownTimer.start()
+            } else if (v.length() >= 0.1) {
+                var item = parent.CursorNavigation.find(Qt.vector2d(axisLeftX, axisLeftY), 10)
+                //cooldownTimer.start()
+                if (item != undefined) {
+                    pointerRect.x = item.x
+                    pointerRect.y = item.y
+                    pointerRect.width = item.width
+                    pointerRect.height = item.height
+                    pointerRect.visible = true
+                }
+            } else {
+                pointerRect.visible = false
             }
         }
 

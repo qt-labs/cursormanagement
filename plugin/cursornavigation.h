@@ -20,8 +20,12 @@ class CursorNavigation : public QObject
 public:
     CursorNavigation(QQuickWindow *parent);
 
+    //move the cursor
     void move(qreal angle, qreal tolerance, bool discrete);
     void move(const QVector2D& vector, qreal tolerance, bool discrete);
+    //find the next item without moving the cursor
+    CursorNavigationAttached *find(qreal angle, qreal tolerance, bool discrete);
+    CursorNavigationAttached *find(const QVector2D& vector, qreal tolerance, bool discrete);
     void action(Action action);
 
     static CursorNavigationAttached *qmlAttachedProperties(QObject *object);
@@ -36,7 +40,8 @@ private:
     void registerItem(CursorNavigationAttached* item);
     void unregisterItem(CursorNavigationAttached* item);
 
-    bool handleMove(qreal angle, qreal tolerance, bool discrete);
+    void  _move(qreal angle, qreal tolerance, bool discrete);
+    CursorNavigationAttached *_find(qreal angle, qreal tolerance, bool discrete);
 
 private:
     static const char windowPropertyName[];
