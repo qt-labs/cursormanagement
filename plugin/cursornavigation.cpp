@@ -147,7 +147,7 @@ void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
             m_currentItem->setHasCursor(false);
             //m_currentItem->item()->setFocus(false);
         }
-        if (item) {
+        if (item && item->acceptsCursor()) {
             item->setHasCursor(true);
             m_currentItem = item;
             m_currentItem->item()->forceActiveFocus();
