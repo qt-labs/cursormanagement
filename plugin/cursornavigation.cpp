@@ -176,7 +176,7 @@ void CursorNavigation::registerItem(CursorNavigationAttached* item)
     QQuickItem *parentItem = item->item()->parentItem();
     CursorNavigationAttached *parentCNA=nullptr;
     while (parentItem) {
-        if ((parentCNA=CursorNavigation::cursorNavigationAttachment(parentItem)))
+        if ((parentCNA=CursorNavigation::cursorNavigationAttachment(parentItem)) && parentCNA->acceptsCursor())
             break;
         parentItem = parentItem->parentItem();
     }
@@ -198,6 +198,8 @@ void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
 
     if (item->m_parentNavigable)
         item->m_parentNavigable->m_children.removeOne(item);
+
+    //TODO if the item that is being unregistered has children, they should be reassigned to the item's parent
 }
 
 void CursorNavigation::_move(qreal angle, qreal tolerance, bool discrete)

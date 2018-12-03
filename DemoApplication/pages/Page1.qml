@@ -71,6 +71,14 @@ Item {
                 y: 241
                 text: qsTr("Button")
             }
+
+            CNButton {
+                id: button8
+                x: 210
+                y: 138
+                text: qsTr("Button (cursor off)")
+                CursorNavigation.acceptsCursor: false
+            }
         }
         //this seems to be the way to force focus on a newly opened dialog?
         Component.onCompleted: { forceActiveFocus(); }

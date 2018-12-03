@@ -8,7 +8,7 @@ Button {
     implicitHeight: 40
 
     CursorNavigation.acceptsCursor: true
-    property bool hasCursor: CursorNavigation.hasCursor
+    //property bool hasCursor: CursorNavigation.hasCursor
 
     background: Rectangle {
         anchors.fill: parent
@@ -31,7 +31,7 @@ Button {
             border.width: 2
             border.color: "red"
             anchors.fill: parent
-            visible: root.hasCursor
+            visible: root.CursorNavigation.hasCursor
             color: "transparent"
         }
     }

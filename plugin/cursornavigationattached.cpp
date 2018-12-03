@@ -37,6 +37,13 @@ void CursorNavigationAttached::setAcceptsCursor(bool acceptsCursor)
 {
     if (acceptsCursor != m_acceptsCursor) {
         m_acceptsCursor=acceptsCursor;
+        if (m_cursorNavigation) {
+            if (m_acceptsCursor)
+                m_cursorNavigation->registerItem(this);
+            else
+                m_cursorNavigation->unregisterItem(this);
+        }
+
         emit acceptsCursorChanged(m_acceptsCursor);
     }
 }
@@ -71,75 +78,89 @@ void CursorNavigationAttached::setEscapeTarget(QQuickItem *escapeTarget)
 void CursorNavigationAttached::move(qreal angle, qreal tolerance)
 {
     qWarning() << "move";
-    m_cursorNavigation->move(angle, tolerance, false);
+    if (m_cursorNavigation)
+        m_cursorNavigation->move(angle, tolerance, false);
 }
 
 void CursorNavigationAttached::move(QVector2D vector, qreal tolerance)
 {
     qWarning() << "move";
-    m_cursorNavigation->move(vector, tolerance, false);
+    if (m_cursorNavigation)
+        m_cursorNavigation->move(vector, tolerance, false);
 }
 
 QQuickItem *CursorNavigationAttached::find(qreal angle, qreal tolerance)
 {
-    CursorNavigationAttached *item = m_cursorNavigation->find(angle, tolerance, false);
-    if (item)
-        return item->item();
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->find(angle, tolerance, false);
+        if (item)
+            return item->item();
+    }
     return nullptr;
 }
 
 QQuickItem *CursorNavigationAttached::find(QVector2D vector, qreal tolerance)
 {
-    CursorNavigationAttached *item = m_cursorNavigation->find(vector, tolerance, false);
-    if (item)
-        return item->item();
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->find(vector, tolerance, false);
+        if (item)
+            return item->item();
+    }
     return nullptr;
 }
 
 void CursorNavigationAttached::moveUp()
 {
-    m_cursorNavigation->move(-90, 0, true);
+    if (m_cursorNavigation)
+        m_cursorNavigation->move(-90, 0, true);
 }
 
 void CursorNavigationAttached::moveDown()
 {
-    m_cursorNavigation->move(90, 0, true);
+    if (m_cursorNavigation)
+        m_cursorNavigation->move(90, 0, true);
 }
 
 void CursorNavigationAttached::moveRight()
 {
-    m_cursorNavigation->move(0, 0, true);
+    if (m_cursorNavigation)
+        m_cursorNavigation->move(0, 0, true);
 }
 
 void CursorNavigationAttached::moveLeft()
 {
-    m_cursorNavigation->move(180, 0, true);
+    if (m_cursorNavigation)
+        m_cursorNavigation->move(180, 0, true);
 }
 
 void CursorNavigationAttached::activate()
 {
-    m_cursorNavigation->action(Activate);
+    if (m_cursorNavigation)
+        m_cursorNavigation->action(Activate);
 }
 
 void CursorNavigationAttached::forward()
 {
-    m_cursorNavigation->action(Forward);
+    if (m_cursorNavigation)
+        m_cursorNavigation->action(Forward);
 }
 
 void CursorNavigationAttached::back()
 {
-    m_cursorNavigation->action(Back);
+    if (m_cursorNavigation)
+        m_cursorNavigation->action(Back);
 }
 
 void CursorNavigationAttached::escape()
 {
-    m_cursorNavigation->action(Escape);
+    if (m_cursorNavigation)
+        m_cursorNavigation->action(Escape);
 }
 
 void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
 {
     qDebug() << "window changed, window = " << window;
-    if (m_cursorNavigation)
+    if (m_cursorNavigation && m_acceptsCursor)
         m_cursorNavigation->unregisterItem(this);
 
     if (window) {
@@ -148,10 +169,8 @@ void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
         m_cursorNavigation = nullptr;
     }
 
-    if (m_cursorNavigation)
+    if (m_cursorNavigation && m_acceptsCursor)
         m_cursorNavigation->registerItem(this);
-
-    //emit focusManagerChanged();
 }
 
 QQuickItem *CursorNavigationAttached::item() const
