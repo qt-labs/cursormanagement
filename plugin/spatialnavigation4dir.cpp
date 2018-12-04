@@ -62,7 +62,6 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
 
     if (CursorNavigationCommand::angleIsBetween(cmd.angle, right_start, right_end) ||
         CursorNavigationCommand::angleIsBetween(cmd.angle, left_start, left_end) ) {
-    //if (cmd == CursorNavigationCommand::Right || cmd == CursorNavigationCommand::Left) {
 
         isInProjection = [&currentItemSceneRect](const QRectF &itemRect) {
             return !( currentItemSceneRect.y() > itemRect.y()+itemRect.height() ||
@@ -81,7 +80,6 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
 
     } else if (CursorNavigationCommand::angleIsBetween(cmd.angle, left_end, right_start) ||
                CursorNavigationCommand::angleIsBetween(cmd.angle, right_end, left_start)) {
-    //} else if (cmd == Command_Up || cmd == Command_Down) {
         isInProjection = [&currentItemSceneRect](const QRectF &itemRect) {
             return !( currentItemSceneRect.x() > itemRect.x()+itemRect.width() ||
                       currentItemSceneRect.x()+currentItemSceneRect.width() < itemRect.x() );
@@ -100,9 +98,12 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
         return nullptr;
     }
 
-    std::pair<CursorNavigationAttached*,int> closest(nullptr,0);
-
-    //qDebug() << "current: x=" << currentItemSceneRect.x() << " y=" << currentItemSceneRect.y();
+    //item that is closest within the projection
+    CursorNavigationAttached* inProjectionItem = nullptr;
+    qreal inProjectionItemDistance = -1;
+    //item that is closest in the general direction, but not within projection
+    CursorNavigationAttached* inDirectionItem = nullptr;
+    qreal inDirectionItemDistance = -1;
 
     for (auto candidate : candidates)
     {
@@ -117,57 +118,28 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
                                     QRect( 0, 0,
                                     candidateItem->width(), candidateItem->height() ));
 
-        //qDebug() << "x=" << candidateSceneRect.x() << " y=" << candidateSceneRect.y();
-
-        if (isInDirection(candidateSceneRect) && isInProjection(candidateSceneRect))
-        {
-            //qDebug() << "  is in direction and projection...";
-            int dist = distanceSquared(currentItemSceneRect,candidateSceneRect);
-            if (closest.second > dist || !closest.first)
-            {
-                closest.second = dist;
-                closest.first = candidate;
-            }
-        }
-    }
-
-    if (closest.first)
-    {
-        qDebug() << "chosen one: " << closest.first->item()->mapRectToScene(
-                        QRect( 0, 0,
-                        closest.first->item()->width(), closest.first->item()->height() ));
-    }
-
-    if (!closest.first) {
-        //qDebug() << Q_FUNC_INFO << " looking for a candidate in the general direction...";
-
-        for (auto candidate : candidates)
-        {
-            QQuickItem *candidateItem = candidate->item();
-            if (!candidateItem->isVisible() || !candidateItem->isEnabled()) {
-                //qDebug() << "skipping a invisible/disabled item";
-                continue;
-            }
-
-            //scene coords of the candidate
-            QRectF candidateSceneRect = candidateItem->mapRectToScene(
-                                        QRect( 0, 0,
-                                        candidateItem->width(), candidateItem->height() ));
-
-            if (isInDirection(candidateSceneRect))
-            {
+        if (isInDirection(candidateSceneRect)) {
+            if (isInProjection(candidateSceneRect)) {
                 int dist = distanceSquared(currentItemSceneRect,candidateSceneRect);
-                if (closest.second > dist || !closest.first)
+                if (inProjectionItemDistance > dist || !inProjectionItem)
                 {
-                    closest.second = dist;
-                    closest.first = candidate;
+                    inProjectionItemDistance = dist;
+                    inProjectionItem = candidate;
+                }
+            } else if (!inProjectionItem) {
+                int dist = distanceSquared(currentItemSceneRect,candidateSceneRect);
+                if (inDirectionItemDistance > dist || !inDirectionItem)
+                {
+                    inDirectionItemDistance = dist;
+                    inDirectionItem = candidate;
                 }
             }
         }
     }
 
-    qDebug() << Q_FUNC_INFO << " selected candidate:" << closest.first;
-
-    return closest.first;
-
+    if (inProjectionItem)
+    {
+        return inProjectionItem;
+    }
+    return inDirectionItem;
 }

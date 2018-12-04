@@ -151,7 +151,7 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
     //item that overlaps the center of the selector beam
     CursorNavigationAttached* directHitItem = nullptr;
     qreal directHitDistance = -1;
-    //item that overlaps selector beam does not overlap with the center
+    //item that overlaps selector beam, but does not overlap with the center
     CursorNavigationAttached* withinToleranceItem = nullptr;
     qreal withinToleranceDistance = -1;
 
