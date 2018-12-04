@@ -9,6 +9,7 @@ m_cursorNavigation(nullptr),
 m_parentNavigable(nullptr),
 m_acceptsCursor(true),
 m_hasCursor(false),
+m_trapsCursor(false),
 m_escapeTarget(nullptr)
 {
     if (parent)

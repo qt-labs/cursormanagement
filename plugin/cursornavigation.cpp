@@ -214,13 +214,29 @@ void CursorNavigation::_move(qreal angle, qreal tolerance, bool discrete)
 CursorNavigationAttached *CursorNavigation::_find(qreal angle, qreal tolerance, bool discrete)
 {
     CursorNavigationAttached *nextItem = nullptr;
+    CursorNavigationAttached *parent = m_currentItem ?
+                m_currentItem->m_parentNavigable :
+                m_rootItem;
+
+    if (!m_currentItem)
+        return defaultItem();
 
     qWarning() << "find next item, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
-    CursorNavigationCommand cmd(angle, tolerance);
 
-    QList<CursorNavigationAttached*> &candidates = m_currentItem ?
-                                m_currentItem->m_parentNavigable->m_children :
-                                m_rootItem->m_children;
+    QList<CursorNavigationAttached*> candidates;
+
+    do {
+        candidates.append(parent->m_children);
+
+        if (parent->trapsCursor())
+            break;
+        parent = parent->m_parentNavigable;
+    } while (parent);
+
+    if (candidates.isEmpty())
+        return nullptr;
+
+    CursorNavigationCommand cmd(angle, tolerance);
 
     if (discrete) {
         nextItem = m_navigation4Dir.getNextCandidate(candidates, m_currentItem, cmd);
@@ -229,4 +245,11 @@ CursorNavigationAttached *CursorNavigation::_find(qreal angle, qreal tolerance, 
     }
 
     return nextItem;
+}
+
+CursorNavigationAttached *CursorNavigation::defaultItem()
+{
+    if (m_rootItem->m_children.size())
+        return m_rootItem->m_children.first();
+    return nullptr;
 }

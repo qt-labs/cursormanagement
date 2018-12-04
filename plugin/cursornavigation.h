@@ -42,6 +42,7 @@ private:
 
     void  _move(qreal angle, qreal tolerance, bool discrete);
     CursorNavigationAttached *_find(qreal angle, qreal tolerance, bool discrete);
+    CursorNavigationAttached *defaultItem();
 
 private:
     static const char windowPropertyName[];

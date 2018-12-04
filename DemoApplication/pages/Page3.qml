@@ -54,6 +54,7 @@ Item {
                     anchors.fill: parent
                     CursorNavigation.acceptsCursor: true
                     CursorNavigation.escapeTarget: defaultButton
+                    CursorNavigation.trapsCursor: trapCheckBox.checked
 
                     //redefine the controls for this scope
                     //(default arrow keys will still work as well, unless reassigned here)
@@ -65,7 +66,7 @@ Item {
                     Grid {
                         spacing: 5
                         columns: 2
-                        rows: 2
+                        rows: 3
 
                         CNButton {
                             text: "sb1"
@@ -82,6 +83,11 @@ Item {
                         CNButton {
                             text: "sb4 (default focus)"
                             focus: true
+                        }
+
+                        CNCheckBox {
+                            id: trapCheckBox
+                            text: "trap cursor"
                         }
                     }
                 }
