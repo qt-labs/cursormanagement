@@ -45,6 +45,12 @@ public slots:
     void setTrapsCursor(bool trapsCursor);
     void setEscapeTarget(QQuickItem * escapeTarget);
 
+    /* just for passing movement changes forward. does not move the cursor.
+     * events are received by the item that currently has the cursor
+     */
+    void setMagnitude(qreal angle, qreal magnitude);
+    void setMagnitude(QVector2D vector);
+
     void move(qreal angle, qreal tolerance = 0);
     void move(QVector2D vector, qreal tolerance = 0);
 
@@ -57,8 +63,8 @@ public slots:
     void moveRight();
     void moveLeft();
     void activate();
-    void forward();
-    void back();
+    void moveForward();
+    void moveBack();
     void escape();
 
 
@@ -68,6 +74,17 @@ signals:
     void trapsCursorChanged(bool trapsCursor);
 
     void escapeTargetChanged(QQuickItem * escapeTarget);
+
+    void magnitudeChanged(qreal angle, qreal magnitude);
+    void moved(qreal angle, qreal tolerance);
+    void movedUp();
+    void movedDown();
+    void movedRight();
+    void movedLeft();
+    void activated();
+    void movedForward();
+    void movedBack();
+    void escaped();
 
 private slots:
     void onWindowChanged(QQuickWindow *window);

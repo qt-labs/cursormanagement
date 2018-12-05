@@ -21,63 +21,43 @@ bool InputAdapter::eventFilter(QObject *object, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         return handleKeyEvent(keyEvent);
-    } else if (event->type() == QEvent::Wheel) {
-        QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(event);
-        return handleWheelEvent(wheelEvent);
-    } else if (event->type() == QEvent::MouseMove) {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-        return handleMouseEvent(mouseEvent);
     }
     return false;
 }
 
 bool InputAdapter::handleKeyEvent(QKeyEvent *event)
 {
-    CursorNavigationCommand cmd;
-    //detect arrow keys, tabs, enter and esc
     switch (event->key())
     {
     case Qt::Key_Left:
-        m_cursorNavigation->move(180, 0, true);
+        m_cursorNavigation->m_rootItem->moveLeft();
         break;
     case Qt::Key_Right:
-        m_cursorNavigation->move(0, 0, true);
+        m_cursorNavigation->m_rootItem->moveRight();
         break;
     case Qt::Key_Up:
-        m_cursorNavigation->move(-90, 0, true);
+        m_cursorNavigation->m_rootItem->moveUp();
         break;
     case Qt::Key_Down:
-        m_cursorNavigation->move(90, 0, true);
+        m_cursorNavigation->m_rootItem->moveDown();
         break;
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        m_cursorNavigation->action(Activate);
+        m_cursorNavigation->m_rootItem->activate();
         break;
     case Qt::BackButton:
     case Qt::Key_Escape:
-        m_cursorNavigation->action(Escape);
+        m_cursorNavigation->m_rootItem->escape();
         break;
     case Qt::Key_Tab:
-        m_cursorNavigation->action(Forward);
+        m_cursorNavigation->m_rootItem->moveForward();
         break;
     case Qt::Key_Backtab:
-        m_cursorNavigation->action(Back);
+        m_cursorNavigation->m_rootItem->moveBack();
         break;
     default:
         return false;
     }
 
     return true;
-}
-
-bool InputAdapter::handleMouseEvent(QMouseEvent *event)
-{
-    //interpret mouse movement as omnnidirectional joystick movements for testing purposes
-    return false;
-}
-
-bool InputAdapter::handleWheelEvent(QWheelEvent *event)
-{
-    //turn wheel events into tabs
-    return false;
 }

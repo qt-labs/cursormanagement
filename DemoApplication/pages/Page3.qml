@@ -17,6 +17,11 @@ Item {
                 width: 100
                 height: 100
                 text: "alone!"
+
+                CursorNavigation.onMovedUp: text = "moved up"
+                CursorNavigation.onMovedDown: text = "moved down"
+                CursorNavigation.onMovedRight: text = "moved right"
+                CursorNavigation.onMovedLeft: text = "moved left"
             }
 
             Grid {

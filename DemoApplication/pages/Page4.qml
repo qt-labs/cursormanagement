@@ -30,7 +30,8 @@ Item {
                 parent.CursorNavigation.move(Qt.vector2d(axisLeftX, axisLeftY), 10)
                 cooldownTimer.start()
             } else if (v.length() >= 0.1) {
-                var item = parent.CursorNavigation.find(Qt.vector2d(axisLeftX, axisLeftY), 10)
+                parent.CursorNavigation.setMagnitude(v)
+                var item = parent.CursorNavigation.find(v, 10)
                 //cooldownTimer.start()
                 if (item != undefined) {
                     pointerRect.x = item.x
@@ -40,6 +41,7 @@ Item {
                     pointerRect.visible = true
                 }
             } else {
+                parent.CursorNavigation.setMagnitude(0,0)
                 pointerRect.visible = false
             }
         }

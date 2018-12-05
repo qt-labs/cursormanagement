@@ -10,6 +10,27 @@ Button {
     CursorNavigation.acceptsCursor: true
     //property bool hasCursor: CursorNavigation.hasCursor
 
+    Rotation {
+        id: rot
+        origin.x: root.width/2
+        origin.y: root.height/2
+    }
+
+    transform: rot
+
+    CursorNavigation.onHasCursorChanged: {
+        if (!hasCursor)
+            rot.angle = 0
+    }
+
+    CursorNavigation.onMagnitudeChanged: {
+        rot.angle = magnitude*45.0;
+        var a = angle * Math.PI/180.0
+        rot.axis.x = -Math.sin(a)
+        rot.axis.y = Math.cos(a)
+        rot.axis.z = 0
+    }
+
     background: Rectangle {
         anchors.fill: parent
         radius: 40

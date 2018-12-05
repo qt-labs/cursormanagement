@@ -20,55 +20,11 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 20
 
-            CursorNavigation.acceptsCursor: true
-            ListView {
+
+            CNListView {
                 id: listView
                 anchors.fill: parent
                 spacing: 4
-                focus: true
-
-                Rectangle {
-                    anchors.fill: parent
-                    visible: listView.activeFocus
-                    border.width: 2
-                    border.color: "red"
-                    color: "transparent"
-                }
-
-                highlight: Rectangle {
-                    width: listView.width
-                    height: 40
-                    color: "lightgrey"
-                    opacity: 0.3
-                }
-
-                delegate: ItemDelegate {
-                    width: listView.width
-                    height: 40
-
-                    contentItem: Row {
-                        width: (parent.width - x)
-                        height: 35
-                        x: 5
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 10
-                        Rectangle {
-                            width: parent.height
-                            height: parent.height
-                            radius: width/2
-                            color: colorCode
-                        }
-                        Text {
-                            height: parent.height
-                            font.bold: true
-                            verticalAlignment: Text.AlignVCenter
-                            text: name
-                        }
-                    }
-                    onClicked: {
-                        listView.currentIndex = index;
-                    }
-                }
 
                 model: ListModel {
                     ListElement {
@@ -89,6 +45,22 @@ Item {
                     ListElement {
                         name: "Green"
                         colorCode: "green"
+                    }
+                    ListElement {
+                        name: "Cyan"
+                        colorCode: "cyan"
+                    }
+                    ListElement {
+                        name: "Magenta"
+                        colorCode: "magenta"
+                    }
+                    ListElement {
+                        name: "Yellow"
+                        colorCode: "yellow"
+                    }
+                    ListElement {
+                        name: "Black"
+                        colorCode: "black"
                     }
                 }
             }

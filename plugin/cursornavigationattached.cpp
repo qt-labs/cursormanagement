@@ -2,6 +2,7 @@
 #include "cursornavigation.h"
 #include <QQuickItem>
 #include <QQuickWindow>
+#include <QtMath>
 
 CursorNavigationAttached::CursorNavigationAttached(QQuickItem *parent)
 :QObject(parent),
@@ -76,24 +77,49 @@ void CursorNavigationAttached::setEscapeTarget(QQuickItem *escapeTarget)
     emit escapeTargetChanged(m_escapeTarget);
 }
 
+void CursorNavigationAttached::setMagnitude(qreal angle, qreal magnitude)
+{
+    if (m_cursorNavigation && m_cursorNavigation->m_currentItem)
+        m_cursorNavigation->m_currentItem->magnitudeChanged(angle, magnitude);
+}
+
+void CursorNavigationAttached::setMagnitude(QVector2D vector)
+{
+    if (m_cursorNavigation && m_cursorNavigation->m_currentItem)
+        m_cursorNavigation->m_currentItem->magnitudeChanged(
+            qRadiansToDegrees(qAtan2(vector.y(), vector.x())), vector.length());
+}
+
 void CursorNavigationAttached::move(qreal angle, qreal tolerance)
 {
     qWarning() << "move";
-    if (m_cursorNavigation)
-        m_cursorNavigation->move(angle, tolerance, false);
+    qreal a = qDegreesToRadians(angle);
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->move(a, t, false) && item)
+            item->moved(a,t);
+    }
 }
 
 void CursorNavigationAttached::move(QVector2D vector, qreal tolerance)
 {
-    qWarning() << "move";
-    if (m_cursorNavigation)
-        m_cursorNavigation->move(vector, tolerance, false);
+    qWarning() << "move (vector)";
+    qreal a = qAtan2(vector.y(), vector.x());
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->move(a, t, false) && item)
+            item->moved(a,t);
+    }
 }
 
 QQuickItem *CursorNavigationAttached::find(qreal angle, qreal tolerance)
 {
+    qreal a = qDegreesToRadians(angle);
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
     if (m_cursorNavigation) {
-        CursorNavigationAttached *item = m_cursorNavigation->find(angle, tolerance, false);
+        CursorNavigationAttached *item = m_cursorNavigation->find(a, t, false);
         if (item)
             return item->item();
     }
@@ -102,8 +128,10 @@ QQuickItem *CursorNavigationAttached::find(qreal angle, qreal tolerance)
 
 QQuickItem *CursorNavigationAttached::find(QVector2D vector, qreal tolerance)
 {
+    qreal a = qAtan2(vector.y(), vector.x());
+    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
     if (m_cursorNavigation) {
-        CursorNavigationAttached *item = m_cursorNavigation->find(vector, tolerance, false);
+        CursorNavigationAttached *item = m_cursorNavigation->find(a, t, false);
         if (item)
             return item->item();
     }
@@ -112,50 +140,74 @@ QQuickItem *CursorNavigationAttached::find(QVector2D vector, qreal tolerance)
 
 void CursorNavigationAttached::moveUp()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->move(-90, 0, true);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->move(qDegreesToRadians(-90.0f), 0, true) && item)
+            item->movedUp();
+    }
 }
 
 void CursorNavigationAttached::moveDown()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->move(90, 0, true);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->move(qDegreesToRadians(90.0f), 0, true) && item)
+            item->movedDown();
+    }
 }
 
 void CursorNavigationAttached::moveRight()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->move(0, 0, true);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->move(qDegreesToRadians(0.0f), 0, true) && item)
+            item->movedRight();
+    }
 }
 
 void CursorNavigationAttached::moveLeft()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->move(180, 0, true);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->move(qDegreesToRadians(180.0f), 0, true) && item)
+            item->movedLeft();
+    }
 }
 
 void CursorNavigationAttached::activate()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->action(Activate);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->action(Activate) && item)
+            item->activated();
+    }
 }
 
-void CursorNavigationAttached::forward()
+void CursorNavigationAttached::moveForward()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->action(Forward);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->action(Forward) && item)
+            item->movedForward();
+    }
 }
 
-void CursorNavigationAttached::back()
+void CursorNavigationAttached::moveBack()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->action(Back);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->action(Back) && item)
+            item->movedBack();
+    }
 }
 
 void CursorNavigationAttached::escape()
 {
-    if (m_cursorNavigation)
-        m_cursorNavigation->action(Escape);
+    if (m_cursorNavigation) {
+        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
+        if (m_cursorNavigation->action(Escape) && item)
+            item->escaped();
+    }
 }
 
 void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)

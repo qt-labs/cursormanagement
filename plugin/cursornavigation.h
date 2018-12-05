@@ -20,13 +20,16 @@ class CursorNavigation : public QObject
 public:
     CursorNavigation(QQuickWindow *parent);
 
+    //pass input events forward to the current item
+    //void setMagnitude(qreal angle, qreal magnitude);
+    //void setMagnitude(const QVector2D& vector);
     //move the cursor
-    void move(qreal angle, qreal tolerance, bool discrete);
-    void move(const QVector2D& vector, qreal tolerance, bool discrete);
+    bool move(qreal angle, qreal tolerance, bool discrete);
+    bool move(const QVector2D& vector, qreal tolerance, bool discrete);
     //find the next item without moving the cursor
     CursorNavigationAttached *find(qreal angle, qreal tolerance, bool discrete);
     CursorNavigationAttached *find(const QVector2D& vector, qreal tolerance, bool discrete);
-    void action(Action action);
+    bool action(Action action);
 
     static CursorNavigationAttached *qmlAttachedProperties(QObject *object);
 
@@ -40,8 +43,6 @@ private:
     void registerItem(CursorNavigationAttached* item);
     void unregisterItem(CursorNavigationAttached* item);
 
-    void  _move(qreal angle, qreal tolerance, bool discrete);
-    CursorNavigationAttached *_find(qreal angle, qreal tolerance, bool discrete);
     CursorNavigationAttached *defaultItem();
 
 private:
@@ -55,6 +56,7 @@ private:
     CursorNavigationAttached *m_rootItem;
 
     friend class CursorNavigationAttached;
+    friend class InputAdapter;
 };
 
 QML_DECLARE_TYPEINFO(CursorNavigation, QML_HAS_ATTACHED_PROPERTIES)

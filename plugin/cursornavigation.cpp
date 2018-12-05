@@ -3,7 +3,6 @@
 #include "spatialnavigation4dir.h"
 #include <QQuickWindow>
 #include <QQuickItem>
-#include <QtMath>
 
 const char CursorNavigation::windowPropertyName[] = "cursor_navigation";
 
@@ -15,44 +14,60 @@ CursorNavigation::CursorNavigation(QQuickWindow *parent)
 ,m_rootItem(new CursorNavigationAttached(nullptr))
 {
     m_rootItem->setParent(m_window->contentItem());
-
-    //m_algorithms.push_back(new SpatialNavigation4Dir());
+    m_rootItem->m_cursorNavigation = this;
 
     connect(m_window, &QQuickWindow::activeFocusItemChanged, this, &CursorNavigation::onActiveFocusItemChanged);
     onActiveFocusItemChanged();
 }
 
-void CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
+bool CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
 {
-    qreal a = qDegreesToRadians(angle);
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
-    _move(a, t, discrete);
-}
+    CursorNavigationAttached *nextItem = find(angle, tolerance, discrete);
 
-void CursorNavigation::move(const QVector2D& vector, qreal tolerance, bool discrete)
-{
-    qreal a = qAtan2(vector.y(), vector.x());
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
-    _move(a, t, discrete);
+    if (nextItem) {
+        setCursorOnItem(nextItem);
+        return true;
+    }
+    return false;
 }
 
 CursorNavigationAttached *CursorNavigation::find(qreal angle, qreal tolerance, bool discrete)
 {
-    qreal a = qDegreesToRadians(angle);
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+    CursorNavigationAttached *nextItem = nullptr;
+    CursorNavigationAttached *parent = m_currentItem ?
+                m_currentItem->m_parentNavigable :
+                m_rootItem;
 
-    return _find(a,t,discrete);
+    if (!m_currentItem)
+        return defaultItem();
+
+    qWarning() << "find next item, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
+
+    QList<CursorNavigationAttached*> candidates;
+
+    do {
+        candidates.append(parent->m_children);
+
+        if (parent->trapsCursor())
+            break;
+        parent = parent->m_parentNavigable;
+    } while (parent);
+
+    if (candidates.isEmpty())
+        return nullptr;
+
+    CursorNavigationCommand cmd(angle, tolerance);
+
+    if (discrete) {
+        nextItem = m_navigation4Dir.getNextCandidate(candidates, m_currentItem, cmd);
+    } else {
+        nextItem = m_navigation360.getNextCandidate(candidates, m_currentItem, cmd);
+    }
+
+    return nextItem;
 }
 
-CursorNavigationAttached *CursorNavigation::find(const QVector2D& vector, qreal tolerance, bool discrete)
-{
-    qreal a = qAtan2(vector.y(), vector.x());
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
-
-    return _find(a,t,discrete);
-}
-
-void CursorNavigation::action(Action action)
+bool CursorNavigation::action(Action action)
 {
     qWarning() << "handleActionCommand, action= " << action;
     switch (action) {
@@ -70,12 +85,12 @@ void CursorNavigation::action(Action action)
              * if we are already at the root item's children, nothing happens
              */
             if (!m_currentItem)
-                break;
+                return false;
 
             QQuickItem *escapeTarget = m_currentItem->m_parentNavigable->escapeTarget();
             if (!escapeTarget) {
                 if (m_currentItem->m_parentNavigable == m_rootItem) {
-                    break;
+                    return false;
                 }
                 escapeTarget = m_currentItem->m_parentNavigable->m_parentNavigable->item();
             }
@@ -84,12 +99,13 @@ void CursorNavigation::action(Action action)
             escapeTarget->forceActiveFocus();
             onActiveFocusItemChanged();
             //escapeTarget->setFocus(true);
-            break;
+            return true;
         }
 
         default:
         break;
     }
+    return false;
 }
 
 CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *object)
@@ -200,51 +216,6 @@ void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
         item->m_parentNavigable->m_children.removeOne(item);
 
     //TODO if the item that is being unregistered has children, they should be reassigned to the item's parent
-}
-
-void CursorNavigation::_move(qreal angle, qreal tolerance, bool discrete)
-{
-    CursorNavigationAttached *nextItem = _find(angle, tolerance, discrete);
-
-    if (nextItem) {
-        setCursorOnItem(nextItem);
-    }
-}
-
-CursorNavigationAttached *CursorNavigation::_find(qreal angle, qreal tolerance, bool discrete)
-{
-    CursorNavigationAttached *nextItem = nullptr;
-    CursorNavigationAttached *parent = m_currentItem ?
-                m_currentItem->m_parentNavigable :
-                m_rootItem;
-
-    if (!m_currentItem)
-        return defaultItem();
-
-    qWarning() << "find next item, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
-
-    QList<CursorNavigationAttached*> candidates;
-
-    do {
-        candidates.append(parent->m_children);
-
-        if (parent->trapsCursor())
-            break;
-        parent = parent->m_parentNavigable;
-    } while (parent);
-
-    if (candidates.isEmpty())
-        return nullptr;
-
-    CursorNavigationCommand cmd(angle, tolerance);
-
-    if (discrete) {
-        nextItem = m_navigation4Dir.getNextCandidate(candidates, m_currentItem, cmd);
-    } else {
-        nextItem = m_navigation360.getNextCandidate(candidates, m_currentItem, cmd);
-    }
-
-    return nextItem;
 }
 
 CursorNavigationAttached *CursorNavigation::defaultItem()
