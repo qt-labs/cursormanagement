@@ -121,7 +121,6 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
         return nullptr;
 
     if (!currentItem && candidates.size()) {
-        qDebug() << "the spatial chooser falling back to first child" << candidates.first();
         return candidates.first();
     }
 
@@ -139,14 +138,10 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
     quadrants[2] = sectorsOverlap(angle1, angle2, -M_PI, -M_PI_2);
     quadrants[3] = sectorsOverlap(angle1, angle2, -M_PI_2, 0);
 
-    qWarning() << "navigation360: beam angles: " << angle1 << " , " << angle2;
-    qWarning() << "navigation360: quadrants = " << quadrants;
-
     const QRectF currentItemSceneRect = currentItem->item()->mapRectToScene(
                 QRectF( 0, 0, currentItem->item()->width(), currentItem->item()->height() ));
 
     const QPointF origin = currentItemSceneRect.center();
-    qWarning() << "origin = " << origin;
 
     //item that overlaps the center of the selector beam
     CursorNavigationAttached* directHitItem = nullptr;
@@ -167,17 +162,14 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
         if (isRectIncluded(quadrants, itemSceneRect, origin)) {
 
             std::pair<qreal,qreal> sector = getSector(itemSceneRect, origin);
-            qWarning() << "item " << iter->item() << " rect = " << itemSceneRect << " sector " << sector;
 
             if (angleIsBetween(cmd.angle, sector.first, sector.second)) {
-                qWarning() << "is direct hit";
                 qreal dist = rectDistance(itemSceneRect, currentItemSceneRect);
                 if (!directHitItem || dist < directHitDistance) {
                     directHitDistance = dist;
                     directHitItem = iter;
                 }
             } else if (!directHitItem && sectorsOverlap(angle1, angle2, sector.first, sector.second)) {
-                qWarning() << "is within tolerances";
                 qreal dist = rectDistance(itemSceneRect, currentItemSceneRect);
                 if (!withinToleranceItem || dist < withinToleranceDistance) {
                     withinToleranceDistance = dist;

@@ -19,12 +19,13 @@ macos:CONFIG -= app_bundle
 SOURCES += \
         src/main.cpp
 
-qml.files = main.qml $$PWD/controls $$PWD/pages
+qml.files = main.qml $$PWD/controls $$PWD/pages $$PWD/graphics
 qml.path = $$OUT_PWD
 INSTALLS += qml
 
 OTHER_FILES += $$files($$PWD/*.qml, true)
 OTHER_FILES += $$files($$PWD/*.qmldir, true)
+OTHER_FILES += $$files($$PWD/*.png, true)
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

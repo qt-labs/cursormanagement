@@ -31,6 +31,9 @@ ApplicationWindow {
         CNTabButton {
             text: qsTr("Page 5")
         }
+        CNTabButton {
+            text: qsTr("Map")
+        }
     }
 
     contentData: StackLayout {
@@ -41,5 +44,6 @@ ApplicationWindow {
         Page3 { }
         Page4 { }
         Page5 { }
+        Page6 { }
     }
 }
