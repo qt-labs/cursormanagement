@@ -100,34 +100,32 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
 
     //item that is closest within the projection
     CursorNavigationAttached* inProjectionItem = nullptr;
-    qreal inProjectionItemDistance = -1;
+    float inProjectionItemDistance = -1;
     //item that is closest in the general direction, but not within projection
     CursorNavigationAttached* inDirectionItem = nullptr;
-    qreal inDirectionItemDistance = -1;
+    float inDirectionItemDistance = -1;
 
     for (auto candidate : candidates)
     {
         QQuickItem *candidateItem = candidate->item();
-        if (!candidateItem->isVisible() || !candidateItem->isEnabled()) {
-            //qDebug() << "skipping a invisible/disabled item";
+        if (!candidate->available() || candidate == currentItem)
             continue;
-        }
 
         //scene coords of the candidate
         QRectF candidateSceneRect = candidateItem->mapRectToScene(
-                                    QRect( 0, 0,
+                                    QRectF( 0, 0,
                                     candidateItem->width(), candidateItem->height() ));
 
         if (isInDirection(candidateSceneRect)) {
             if (isInProjection(candidateSceneRect)) {
-                int dist = distanceSquared(currentItemSceneRect,candidateSceneRect);
+                float dist = distanceSquared(currentItemSceneRect,candidateSceneRect);
                 if (inProjectionItemDistance > dist || !inProjectionItem)
                 {
                     inProjectionItemDistance = dist;
                     inProjectionItem = candidate;
                 }
             } else if (!inProjectionItem) {
-                int dist = distanceSquared(currentItemSceneRect,candidateSceneRect);
+                float dist = distanceSquared(currentItemSceneRect,candidateSceneRect);
                 if (inDirectionItemDistance > dist || !inDirectionItem)
                 {
                     inDirectionItemDistance = dist;

@@ -13,28 +13,34 @@ ApplicationWindow {
     visible: true
     title: qsTr("Cursor Navigation Demo Application")
 
-    header: TabBar {
-        id: tabBar
-        width: parent.width
-        CNTabButton {
-            text: qsTr("Page 1")
+    header:
+
+        TabBar {
+            id: tabBar
+            width: window.width
+
+            CursorNavigation.acceptsCursor: true
+
+            CNTabButton {
+                text: qsTr("Page 1")
+                focus: true
+            }
+            CNTabButton {
+                text: qsTr("Page 2")
+            }
+            CNTabButton {
+                text: qsTr("Page 3")
+            }
+            CNTabButton {
+                text: qsTr("Page 4")
+            }
+            CNTabButton {
+                text: qsTr("Page 5")
+            }
+            CNTabButton {
+                text: qsTr("Map")
+            }
         }
-        CNTabButton {
-            text: qsTr("Page 2")
-        }
-        CNTabButton {
-            text: qsTr("Page 3")
-        }
-        CNTabButton {
-            text: qsTr("Page 4")
-        }
-        CNTabButton {
-            text: qsTr("Page 5")
-        }
-        CNTabButton {
-            text: qsTr("Map")
-        }
-    }
 
     contentData: StackLayout {
         anchors.fill: parent

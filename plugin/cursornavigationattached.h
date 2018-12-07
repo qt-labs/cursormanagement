@@ -12,7 +12,7 @@ class QQuickWindow;
 class CursorNavigationAttached : public QObject
 {
     Q_OBJECT
-    //is available for cursor navigation
+    //is included for cursor navigation
     Q_PROPERTY(bool acceptsCursor READ acceptsCursor WRITE setAcceptsCursor NOTIFY acceptsCursorChanged)
     //indicates if item is currently selected, indicated also by activeFocus property
     Q_PROPERTY(bool hasCursor READ hasCursor NOTIFY hasCursorChanged)
@@ -32,6 +32,11 @@ public:
     bool hasCursor() const;
     bool trapsCursor() const;
     QQuickItem *escapeTarget() const;
+    /* indicates if the item is currently available for the navigation.
+     * item might not be availble if it is disabled, invisible, outside of its
+     * parent's geometry or simply not accepting cursor
+     */
+    bool available() const;
 
     QQuickItem *item() const;
 

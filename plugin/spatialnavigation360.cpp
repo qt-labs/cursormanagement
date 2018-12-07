@@ -153,11 +153,11 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
 
     for (auto iter: candidates)
     {
+        if (!iter->available() || iter == currentItem)
+            continue;
+
         const QRectF itemSceneRect = iter->item()->mapRectToScene(
                     QRectF( 0, 0, iter->item()->width(), iter->item()->height() ));
-
-        if (iter == currentItem || !iter->item()->isVisible() || !iter->item()->isEnabled())
-            continue;
 
         if (isRectIncluded(quadrants, itemSceneRect, origin)) {
 

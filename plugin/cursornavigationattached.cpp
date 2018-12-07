@@ -185,6 +185,16 @@ QQuickItem *CursorNavigationAttached::escapeTarget() const
     return m_escapeTarget;
 }
 
+bool CursorNavigationAttached::available() const
+{
+    if (m_acceptsCursor && item()->isVisible() && item()->isEnabled()) {
+        QRectF parentRect(0,0,m_parentNavigable->item()->width(), m_parentNavigable->item()->height());
+        QRectF thisRect = item()->mapRectToItem(m_parentNavigable->item(), QRectF(0,0,item()->width(), item()->height()));
+        return parentRect.intersects(thisRect);
+    }
+    return false;
+}
+
 void CursorNavigationAttached::setHasCursor(bool hasCursor)
 {
     if (hasCursor != m_hasCursor) {
