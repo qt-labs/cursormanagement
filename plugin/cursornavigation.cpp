@@ -166,9 +166,8 @@ void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
         if (item && item->acceptsCursor()) {
             item->setHasCursor(true);
             m_currentItem = item;
-            m_currentItem->item()->forceActiveFocus();
-            //m_currentItem->item()->setFocus(true);
             qWarning() << "Set cursor to " << item->item();
+            m_currentItem->item()->forceActiveFocus();
         } else {
             qWarning() << "Set cursor to NULL";
             m_currentItem = nullptr;
@@ -179,7 +178,17 @@ void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
 void CursorNavigation::onActiveFocusItemChanged()
 {
     qWarning() << "onActiveFocusItemChanged, item:" << m_window->activeFocusItem();
-    setCursorOnItem(cursorNavigationAttachment(m_window->activeFocusItem()));
+
+    QQuickItem *item = m_window->activeFocusItem();
+    while (item) {
+        CursorNavigationAttached *cursorNavigable = cursorNavigationAttachment(item);
+        if (cursorNavigable && cursorNavigable->available()) {
+            setCursorOnItem(cursorNavigable);
+            return;
+        }
+        item = item->parentItem();
+    }
+    setCursorOnItem(nullptr);
 }
 
 void CursorNavigation::registerItem(CursorNavigationAttached* item)
