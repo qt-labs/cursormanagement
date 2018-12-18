@@ -176,11 +176,8 @@ void CursorNavigationAttached::moveLeft()
 
 void CursorNavigationAttached::activate()
 {
-    if (m_cursorNavigation) {
-        CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
-        if (m_cursorNavigation->action(Activate) && item)
-            item->activated();
-    }
+    if (m_cursorNavigation && m_cursorNavigation->m_currentItem)
+        m_cursorNavigation->m_currentItem->activated();
 }
 
 void CursorNavigationAttached::moveForward()

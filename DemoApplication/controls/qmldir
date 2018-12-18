@@ -1,7 +1,9 @@
 CNButton 1.0 CNButton.qml
+CNFlipButton 1.0 CNFlipButton.qml
 CNTabButton 1.0 CNTabButton.qml
 CNToolButton 1.0 CNToolButton.qml
 CNRadioButton 1.0 CNRadioButton.qml
 CNSwitch 1.0 CNSwitch.qml
 CNCheckBox 1.0 CNCheckBox.qml
 CNListView 1.0 CNListView.qml
+CNItemDelegate 1.0 CNItemDelegate.qml

@@ -18,11 +18,41 @@ Item {
                 id: listView
                 width: 198
                 height: 359
-                //anchors.right: parent.right
-                //anchors.top: parent.top
-                //anchors.topMargin: 20
+
                 spacing: 4
                 clip: true
+
+                delegate: CNItemDelegate {
+                    width: listView.width
+                    height: 40
+
+                    contentItem: Item {
+                        width: listView.width
+                        height: 40
+
+                        Row {
+                            width: (parent.width - x)
+                            height: 35
+                            x: 5
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 10
+
+                            Rectangle {
+                                width: parent.height
+                                height: parent.height
+                                radius: width/2
+                                color: colorCode
+                            }
+
+                            Text {
+                                height: parent.height
+                                font.bold: true
+                                verticalAlignment: Text.AlignVCenter
+                                text: name
+                            }
+                        }
+                    }
+                }
 
                 model: ListModel {
                     ListElement {
@@ -74,17 +104,11 @@ Item {
             CNButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 id: button3
-                //anchors.top: listView.bottom
-                //anchors.topMargin: 20
-                //anchors.right: parent.right
-                //anchors.rightMargin: 60
                 text: qsTr("Button")
             }
         }
+
         Column {
-            //anchors.verticalCenter: parent.verticalCenter
-            //anchors.left: parent.left
-            //anchors.leftMargin: 50
             spacing: 30
             CNButton {
                 text: qsTr("Button")
@@ -97,6 +121,41 @@ Item {
             CNButton {
                 text: qsTr("Button")
             }
+        }
+
+        CNListView {
+            id: listView2
+            width: 198
+            height: 359
+
+            spacing: 4
+            clip: true
+
+            /* when we set acceptsCursor false for the ListView itself,
+             * navigation between the list items and items outside of the list,
+             * is based on the item geometry and not just the whole ListView's geometry
+             */
+            CursorNavigation.acceptsCursor: false
+
+            delegate: CNItemDelegate {
+                width: listView.width
+                height: 40
+
+                CursorNavigation.onActivated: checkBox.toggle()
+
+                contentItem: Item {
+                    width: listView.width
+                    height: 40
+
+                    CheckBox{
+                        id: checkBox
+                        text: "Item " + index
+                        anchors.centerIn: parent
+                    }
+                }
+            }
+
+            model: 10
         }
 
     }

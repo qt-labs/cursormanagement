@@ -22,6 +22,7 @@ Item {
                 CursorNavigation.onMovedDown: text = "moved down"
                 CursorNavigation.onMovedRight: text = "moved right"
                 CursorNavigation.onMovedLeft: text = "moved left"
+                CursorNavigation.onActivated: text = "Activated"
             }
 
             Grid {

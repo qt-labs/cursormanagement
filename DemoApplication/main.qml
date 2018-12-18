@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtGamepad 1.0
 
 import CursorNavigation 1.0
 import controls 1.0
@@ -92,20 +93,74 @@ ApplicationWindow {
         }
     }
 
-    contentData: StackLayout {
+    contentData: Item {
+        id: contentItem
         anchors.fill: parent
-        currentIndex: tabBar.currentIndex
-        Page1 { }
-        Page2 { }
-        Page3 { }
-        Page4 { }
-        Page5 { }
-        Page6 { }
+        StackLayout {
+            anchors.fill: parent
+            currentIndex: tabBar.currentIndex
+            Page1 { }
+            Page2 { }
+            Page3 { }
+            Page4 { }
+            Page5 { }
+            Page6 { }
+        }
+
+        CursorNavigation.acceptsCursor: false
+
+        Timer {
+            id: cooldownTimer
+            interval: 500
+            repeat: false
+        }
+
+        Rectangle {
+            id: pointerRect
+            border.color: "orange"
+            border.width: 1
+            visible: false
+            color: "transparent"
+        }
+
+        //use gamepad as another source of input. use analog stick input for magnitude information
+        Gamepad {
+            deviceId: GamepadManager.connectedGamepads.length > 0 ? GamepadManager.connectedGamepads[0] : -1
+
+            function handleMove() {
+                var v = Qt.vector2d(axisLeftX, axisLeftY)
+                if (v.length() >= 0.99 && !cooldownTimer.running) {
+                    //console.log("handle joystick move, v=" + v)
+                    contentItem.CursorNavigation.move(Qt.vector2d(axisLeftX, axisLeftY), 10)
+                    cooldownTimer.start()
+                } else if (v.length() >= 0.1) {
+                    contentItem.CursorNavigation.setMagnitude(v)
+                    /*var item = parent.CursorNavigation.find(v, 10)
+                    //cooldownTimer.start()
+                    if (item != undefined) {
+                        pointerRect.x = item.x
+                        pointerRect.y = item.y
+                        pointerRect.width = item.width
+                        pointerRect.height = item.height
+                        pointerRect.visible = true
+                    }*/
+                } else {
+                    contentItem.CursorNavigation.setMagnitude(0,0)
+                    pointerRect.visible = false
+                }
+            }
+
+            onAxisLeftXChanged: handleMove()
+            onAxisLeftYChanged: handleMove()
+            onButtonAChanged: if (buttonA) contentItem.CursorNavigation.activate()
+            onButtonBChanged: if (buttonB) contentItem.CursorNavigation.activate()
+        }
     }
 
     //a trick that ensure the cursor can be moved on the tabbar without needing to click teh tabbar first
     Component.onCompleted: {
         defaultButton.forceActiveFocus()
     }
+
 
 }

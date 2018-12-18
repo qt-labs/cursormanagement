@@ -111,6 +111,38 @@ Item {
             anchors.fill: parent
             spacing: 4
 
+            delegate: CNItemDelegate {
+                width: listView.width
+                height: 40
+
+                contentItem: Item {
+                    width: listView.width
+                    height: 40
+
+                    Row {
+                        width: (parent.width - x)
+                        height: 35
+                        x: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 10
+
+                        Rectangle {
+                            width: parent.height
+                            height: parent.height
+                            radius: width/2
+                            color: colorCode
+                        }
+
+                        Text {
+                            height: parent.height
+                            font.bold: true
+                            verticalAlignment: Text.AlignVCenter
+                            text: name
+                        }
+                    }
+                }
+            }
+
             model: ListModel {
                 ListElement { name: "Joe"; colorCode: "grey" }
                 ListElement { name: "Hillary"; colorCode: "red" }

@@ -16,36 +16,6 @@ Item {
         repeat: false
     }
 
-    Gamepad {
-        deviceId: GamepadManager.connectedGamepads.length > 0 ? GamepadManager.connectedGamepads[0] : -1
-
-        function handleMove() {
-            var v = Qt.vector2d(axisLeftX, axisLeftY)
-            if (v.length() >= 0.99 && !cooldownTimer.running) {
-                //console.log("handle joystick move, v=" + v)
-                parent.CursorNavigation.moveCursor(Qt.vector2d(axisLeftX, axisLeftY), 10)
-                cooldownTimer.start()
-            } else if (v.length() >= 0.1) {
-                var item = parent.CursorNavigation.find(v, 10)
-                //cooldownTimer.start()
-                if (item != undefined) {
-                    pointerRect.x = item.x
-                    pointerRect.y = item.y
-                    pointerRect.width = item.width+10
-                    pointerRect.height = item.height+10
-                    pointerRect.radius = item.width/2+5
-                    pointerRect.visible = true
-                }
-            } else {
-                pointerRect.visible = false
-            }
-        }
-
-        onAxisLeftXChanged: handleMove()
-        onAxisLeftYChanged: handleMove()
-    }
-
-
     Plugin {
         id: mapPlugin
         name: "esri" //"osm", "mapboxgl", "esri", ...

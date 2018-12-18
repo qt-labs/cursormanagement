@@ -41,7 +41,7 @@ CursorNavigationAttached *CursorNavigation::find(qreal angle, qreal tolerance, b
     if (!m_currentItem)
         return defaultItem();
 
-    qWarning() << "find next item, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
+    //qWarning() << "find next item, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
 
     QList<CursorNavigationAttached*> candidates;
 

@@ -4,11 +4,5 @@ import CursorNavigation 1.0
 
 ToolButton {
     CursorNavigation.acceptsCursor: true
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        border.width: 2
-        border.color: "red"
-        visible: parent.CursorNavigation.hasCursor
-    }
+    CNCursorIndicator { cursorItem : parent }
 }
