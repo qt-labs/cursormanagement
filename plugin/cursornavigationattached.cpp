@@ -212,7 +212,7 @@ void CursorNavigationAttached::escape()
 
 void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
 {
-    qDebug() << "window changed, window = " << window;
+    //qDebug() << "window changed, window = " << window;
     if (m_cursorNavigation && m_acceptsCursor)
         m_cursorNavigation->unregisterItem(this);
 

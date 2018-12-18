@@ -4,7 +4,6 @@ import CursorNavigation 1.0
 
 ListView {
     id: listView
-    anchors.fill: parent
     spacing: 4
     focus: true
     /* when list view scopes the cursor, the cursor is passed further to its

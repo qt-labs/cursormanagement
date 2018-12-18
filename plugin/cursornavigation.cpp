@@ -193,7 +193,7 @@ void CursorNavigation::onActiveFocusItemChanged()
 
 void CursorNavigation::registerItem(CursorNavigationAttached* item)
 {
-    qWarning() << "register item " << item;
+    //qWarning() << "register item " << item;
     if (!item)
         return;
 
@@ -217,7 +217,7 @@ void CursorNavigation::registerItem(CursorNavigationAttached* item)
 
 void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
 {
-    qWarning() << "unregister item " << item;
+    //qWarning() << "unregister item " << item;
     if (item == m_currentItem)
         setCursorOnItem(nullptr);
 
