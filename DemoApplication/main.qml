@@ -1,5 +1,5 @@
 import QtQuick 2.9
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 import QtGamepad 1.0
 
@@ -13,6 +13,21 @@ ApplicationWindow {
     height: 600
     visible: true
     title: qsTr("Cursor Navigation Demo Application")
+
+    MessageDialog {
+        id: dialog
+        visible: false
+        x: window.x+window.width/2-dialog.width/2
+        y: window.y+window.height/2-dialog.height/2
+    }
+
+    Shortcut {
+        id: dialogSC
+        sequence: "p"
+        onActivated: {
+            dialog.visible = true
+        }
+    }
 
     /* there are alternative ways to implement a tabbar. the traditional tabbar has
      * problems with CursorNavigation: when trying to navigate the cursor on it
