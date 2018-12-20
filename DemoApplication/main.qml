@@ -88,20 +88,14 @@ ApplicationWindow {
 
         CNTabButton {
             id: defaultButton
-            text: qsTr("Page 1")
+            text: qsTr("Basics and scopes")
             focus: true
         }
         CNTabButton {
-            text: qsTr("Page 2")
+            text: qsTr("Lists etc")
         }
         CNTabButton {
-            text: qsTr("Page 3")
-        }
-        CNTabButton {
-            text: qsTr("Page 4")
-        }
-        CNTabButton {
-            text: qsTr("Page 5")
+            text: qsTr("Flip buttons")
         }
         CNTabButton {
             text: qsTr("Map")
@@ -116,9 +110,7 @@ ApplicationWindow {
             currentIndex: tabBar.currentIndex
             Page1 { }
             Page2 { }
-            Page3 { }
             Page4 { }
-            Page5 { }
             Page6 { }
         }
 

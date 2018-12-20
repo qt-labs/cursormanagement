@@ -4,7 +4,7 @@ import CursorNavigation 1.0
 Rectangle {
     property Item cursorItem
     border.width: 2
-    border.color: "#ff66aa"
+    border.color: "deeppink"
     anchors.fill: parent
     visible: cursorItem.CursorNavigation.hasCursor
     color: "transparent"

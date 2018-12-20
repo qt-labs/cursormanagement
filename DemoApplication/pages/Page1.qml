@@ -1,5 +1,5 @@
 import QtQuick 2.9
-
+import QtQuick.Layouts 1.3
 import CursorNavigation 1.0
 import controls 1.0
 
@@ -7,80 +7,109 @@ Item {
     width: parent.width
     height: parent.height
 
-    FocusScope {
-        anchors.fill: parent
+    RowLayout {
+        anchors.centerIn: parent
 
-        Item {
-            width: 500
-            height: 400
-            anchors.centerIn: parent
+        GridLayout {
+            rows: 3
+            columns: 2
+            rowSpacing: 10
+            columnSpacing: 10
 
             CNButton {
                 id: button
-                x: 52
-                y: 50
                 text: qsTr("Button")
             }
 
             CNButton {
                 id: button1
-                x: 110
-                y: 138
                 text: qsTr("Button")
             }
 
             CNButton {
                 id: button2
-                x: 160
-                y: 241
-                text: qsTr("Button with default focus")
-                focus: true
+                text: qsTr("Button \n(cursor off)")
+                CursorNavigation.acceptsCursor: false
             }
 
             CNButton {
                 id: button3
-                x: 383
-                y: 241
-                text: qsTr("Button")
+                text: qsTr("Button \n(esc. target)")
             }
 
-            CNButton {
-                id: button4
-                x: 383
-                y: 322
-                text: qsTr("Button")
+            Rectangle {
+                border.width: 1
+                CNCursorIndicator { cursorItem: textEdit }
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
+                Layout.minimumWidth: 100
+                Layout.preferredWidth: 200
+                Layout.maximumWidth: 300
+                Layout.minimumHeight: 30
+                TextEdit {
+                    id: textEdit
+                    anchors.fill: parent
+                    CursorNavigation.acceptsCursor: true
+                    text: "some text..."
+                }
             }
 
-            CNButton {
-                id: button5
-                x: 383
-                y: 138
-                text: qsTr("Button")
-            }
+        }
 
-            CNButton {
-                id: button6
-                x: 383
-                y: 50
-                text: qsTr("Button")
-            }
+        Rectangle {
+            Layout.fillWidth: true
+            //Layout.minimumWidth: 300
+            //Layout.preferredWidth: 250
+            //Layout.maximumWidth: 300
+            //Layout.minimumHeight: 350
+            Layout.minimumHeight: grid.height
+            Layout.minimumWidth: grid.width
+            border.width: 1
 
-            CNButton {
-                id: button7
-                x: 62
-                y: 241
-                text: qsTr("Button")
-            }
+            FocusScope {
+                anchors.fill: parent
+                CursorNavigation.acceptsCursor: true
+                CursorNavigation.escapeTarget: button3
+                CursorNavigation.trapsCursor: trapCheckBox.checked
 
-            CNButton {
-                id: button8
-                x: 210
-                y: 138
-                text: qsTr("Button (cursor off)")
-                CursorNavigation.acceptsCursor: false
+                GridLayout {
+                    id: grid
+                    anchors.centerIn: parent
+                    rows: 3
+                    columns: 2
+                    rowSpacing: 10
+                    columnSpacing: 10
+
+                    CNButton {
+                        id: button4
+                        //make the focusscope forward the focus and the cursor to it's children
+                        focus: true
+                        text: qsTr("Button")
+                    }
+
+                    CNButton {
+                        id: button5
+                        text: qsTr("Button")
+                    }
+
+                    CNButton {
+                        id: button6
+                        text: qsTr("Button")
+                    }
+
+                    CNButton {
+                        id: button7
+                        text: qsTr("Button")
+                    }
+
+                    CNCheckBox {
+                        id: trapCheckBox
+                        text: "Trap cursor to this scope"
+                        Layout.columnSpan: 2
+                    }
+                }
             }
         }
-        //this seems to be the way to force focus on a newly opened dialog?
-        Component.onCompleted: { forceActiveFocus(); }
     }
+
 }

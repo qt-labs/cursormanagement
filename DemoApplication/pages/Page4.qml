@@ -8,8 +8,9 @@ Item {
     GridLayout {
         columns: 4
         rows: 4
+        rowSpacing: 10
+        columnSpacing: 10
 
-        anchors.fill: parent
         anchors.centerIn: parent
 
         Repeater {

@@ -14,6 +14,7 @@ Button {
         radius: 40
         opacity: root.pressed ? 0.6 : 0.4
         color: "grey"
+        border.width: 1
     }
 
     contentItem: Item {

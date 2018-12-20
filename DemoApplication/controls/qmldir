@@ -7,4 +7,5 @@ CNSwitch 1.0 CNSwitch.qml
 CNCheckBox 1.0 CNCheckBox.qml
 CNListView 1.0 CNListView.qml
 CNItemDelegate 1.0 CNItemDelegate.qml
+CNCursorIndicator 1.0 CNCursorIndicator.qml
 MessageDialog 1.0 MessageDialog.qml

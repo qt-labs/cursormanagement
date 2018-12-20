@@ -10,7 +10,7 @@ Item {
     height: parent.height
 
     RowLayout {
-        anchors.fill: parent
+        anchors.centerIn: parent
         spacing: 10
 
         Column {
