@@ -5,26 +5,43 @@ import "../controls"
 
 Item {
 
-    GridLayout {
-        columns: 4
-        rows: 4
-        rowSpacing: 10
-        columnSpacing: 10
+    Text {
+        id: text
+        text: "CursorNavigation allows passing the navigable items information about cursor's intended or actual movement. This example demonstrates a button that uses cursor's magnitude and movement information to implement a flipping motion that follows the cursor's direction."
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 10
+        wrapMode: Text.WordWrap
+    }
 
-        anchors.centerIn: parent
+    Item {
+        anchors.top: text.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
 
-        Repeater {
-            CNFlipButton {
-                Layout.minimumWidth: 110
-                Layout.minimumHeight: 110
-                text: "Button " + index
+        GridLayout {
+            columns: 4
+            rows: 4
+            rowSpacing: 10
+            columnSpacing: 10
 
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+            anchors.centerIn: parent
+
+            Repeater {
+                CNFlipButton {
+                    Layout.minimumWidth: 110
+                    Layout.minimumHeight: 110
+                    text: "Button " + index
+
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                }
+
+                model: 16
             }
 
-            model: 16
         }
-
     }
 
 }

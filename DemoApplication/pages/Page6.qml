@@ -10,6 +10,16 @@ Item {
     width: parent.width
     height: parent.height
 
+    Text {
+        id: text
+        text: "CursorNavigation allows navigation in a simple 4-way, or a completely free 360 degree manner. The 4 way navigation is useful for traditional, rectangular and structured UIs, however, the example here works best when using a controller that allows moving to any direction (eg. analog stick)."
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 10
+        wrapMode: Text.WordWrap
+    }
+
     Timer {
         id: cooldownTimer
         interval: 500
@@ -54,7 +64,10 @@ Item {
 
     Map {
         id: map
-        anchors.fill: parent
+        anchors.top: text.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
         plugin: mapPlugin;
         center: locationOslo
         zoomLevel: 13
