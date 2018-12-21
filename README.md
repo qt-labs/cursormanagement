@@ -1,5 +1,5 @@
 
-## what is it for?
+## What is it for?
 
 Cursor is an indicator for the target of user interactions in a GUI. In this case, it's more specifically a selector for individual UI elements, such as buttons, and not completely freely moving, like a mouse pointer. The purpose of the CursorNavigation plugin is to provide a generic way of enabling cursor navigation in QML UIs with minimal configuration and ease of use in mind. Minimal configuration, in this case, would be in comparison to eg. qt's existing key navigation, where the navigation path has to be defined explicitly on a per element basis. CursorNavigation ships as a plugin for Qt and is loaded by simply importing it in QML, usable right from the beginning of the ui development.
 

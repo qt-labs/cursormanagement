@@ -18,11 +18,11 @@ Item {
                 height: 100
                 text: "alone!"
 
-                CursorNavigation.onMovedUp: text = "moved up"
-                CursorNavigation.onMovedDown: text = "moved down"
-                CursorNavigation.onMovedRight: text = "moved right"
-                CursorNavigation.onMovedLeft: text = "moved left"
-                CursorNavigation.onActivated: text = "Activated"
+                CursorNavigation.onMovedUp: { text = "moved up"; }
+                CursorNavigation.onMovedDown: { text = "moved down"; }
+                CursorNavigation.onMovedRight: { text = "moved right"; }
+                CursorNavigation.onMovedLeft: { text = "moved left"; }
+                CursorNavigation.onActivated: { text = "Activated"; }
             }
 
             Grid {
@@ -64,10 +64,10 @@ Item {
 
                     //redefine the controls for this scope
                     //(default arrow keys will still work as well, unless reassigned here)
-                    Keys.onDigit5Pressed: CursorNavigation.moveUp()
-                    Keys.onDigit2Pressed: CursorNavigation.moveDown()
-                    Keys.onDigit3Pressed: CursorNavigation.moveRight()
-                    Keys.onDigit1Pressed: CursorNavigation.moveLeft()
+                    Keys.onDigit5Pressed: { CursorNavigation.moveUp(); }
+                    Keys.onDigit2Pressed: { CursorNavigation.moveDown(); }
+                    Keys.onDigit3Pressed: { CursorNavigation.moveRight(); }
+                    Keys.onDigit1Pressed: { CursorNavigation.moveLeft(); }
 
                     Grid {
                         spacing: 5

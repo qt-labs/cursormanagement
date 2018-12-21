@@ -25,7 +25,7 @@ ApplicationWindow {
         id: dialogSC
         sequence: "p"
         onActivated: {
-            dialog.visible = true
+            dialog.visible = true;
         }
     }
 
@@ -135,13 +135,13 @@ ApplicationWindow {
             deviceId: GamepadManager.connectedGamepads.length > 0 ? GamepadManager.connectedGamepads[0] : -1
 
             function handleMove() {
-                var v = Qt.vector2d(axisLeftX, axisLeftY)
+                var v = Qt.vector2d(axisLeftX, axisLeftY);
                 if (v.length() >= 0.99 && !cooldownTimer.running) {
                     //console.log("handle joystick move, v=" + v)
-                    contentItem.CursorNavigation.move(Qt.vector2d(axisLeftX, axisLeftY), 10)
-                    cooldownTimer.start()
+                    contentItem.CursorNavigation.move(Qt.vector2d(axisLeftX, axisLeftY), 10);
+                    cooldownTimer.start();
                 } else if (v.length() >= 0.1) {
-                    contentItem.CursorNavigation.setMagnitude(v)
+                    contentItem.CursorNavigation.setMagnitude(v);
                     /*var item = parent.CursorNavigation.find(v, 10)
                     //cooldownTimer.start()
                     if (item != undefined) {
@@ -152,22 +152,20 @@ ApplicationWindow {
                         pointerRect.visible = true
                     }*/
                 } else {
-                    contentItem.CursorNavigation.setMagnitude(0,0)
-                    pointerRect.visible = false
+                    contentItem.CursorNavigation.setMagnitude(0,0);
+                    pointerRect.visible = false;
                 }
             }
 
-            onAxisLeftXChanged: handleMove()
-            onAxisLeftYChanged: handleMove()
-            onButtonAChanged: if (buttonA) contentItem.CursorNavigation.activate()
-            onButtonBChanged: if (buttonB) contentItem.CursorNavigation.activate()
+            onAxisLeftXChanged: { handleMove(); }
+            onAxisLeftYChanged: { handleMove(); }
+            onButtonAChanged: { if (buttonA) { contentItem.CursorNavigation.activate(); } }
+            onButtonBChanged: { if (buttonB) { contentItem.CursorNavigation.activate(); } }
         }
     }
 
-    //a trick that ensure the cursor can be moved on the tabbar without needing to click teh tabbar first
+    //a trick that ensures the cursor can be moved on the tabbar without needing to click teh tabbar first
     Component.onCompleted: {
-        defaultButton.forceActiveFocus()
+        defaultButton.forceActiveFocus();
     }
-
-
 }

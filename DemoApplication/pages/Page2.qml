@@ -11,7 +11,7 @@ Item {
 
     Text {
         id: text
-        text: "Lists and list items may also be defined cursor navigable. Try moving the cursor between the lists and the other controls. List on the left is defined as a navigable item and so are its items. A list like this will relay the cursor to its currently selected child. However, list on the right has only its children defines as navigables and this will mean cursor will move to the item based on cursor's and items' locations."
+        text: "Lists and list items may also be defined cursor navigable. Try moving the cursor between the lists and the other controls. List on the left is defined as a navigable item and so are its items. A list like this will relay the cursor to its currently selected child. However, list on the right has only its children defined as navigables and this will mean cursor will move to the item based on cursor's and item's locations."
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right

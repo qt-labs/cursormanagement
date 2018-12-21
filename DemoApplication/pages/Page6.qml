@@ -37,14 +37,14 @@ Item {
         active: true
         updateInterval: 120000 // 2 mins
         onPositionChanged:  {
-            var currentPosition = positionSource.position.coordinate
-            map.center = currentPosition
-            var distance = currentPosition.distanceTo(lastSearchPosition)
+            var currentPosition = positionSource.position.coordinate;
+            map.center = currentPosition;
+            var distance = currentPosition.distanceTo(lastSearchPosition);
             if (distance > 500) {
                 // 500m from last performed pizza search
-                lastSearchPosition = currentPosition
-                searchModel.searchArea = QtPositioning.circle(currentPosition)
-                searchModel.update()
+                lastSearchPosition = currentPosition;
+                searchModel.searchArea = QtPositioning.circle(currentPosition);
+                searchModel.update();
             }
         }
     }
@@ -59,7 +59,7 @@ Item {
         searchTerm: "Pizza"
         searchArea: QtPositioning.circle(locationOslo)
 
-        Component.onCompleted: update()
+        Component.onCompleted: { update(); }
     }
 
     Map {
@@ -110,9 +110,10 @@ Item {
     Connections {
         target: searchModel
         onStatusChanged: {
-            if (searchModel.status == PlaceSearchModel.Error)
-                console.log("Search error!")
+            if (searchModel.status == PlaceSearchModel.Error) {
+                console.log("Search error!");
                 console.log(searchModel.errorString());
+            }
         }
     }
 }

@@ -8,7 +8,8 @@ ItemDelegate {
 
     //here we make sure the list's current index follows the cursor!
     CursorNavigation.onHasCursorChanged: {
-        if (CursorNavigation.hasCursor)
-            parent.currentIndex = index
+        if (CursorNavigation.hasCursor) {
+            parent.currentIndex = index;
+        }
     }
 }

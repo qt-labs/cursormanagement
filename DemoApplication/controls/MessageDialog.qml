@@ -22,15 +22,15 @@ Window {
             CNButton {
                 text: "Yes"
                 focus: true
-                onClicked: root.close()
+                onClicked: { root.close(); }
             }
             CNButton {
                 text: "Whatever"
-                onClicked: root.close()
+                onClicked: { root.close(); }
             }
             CNButton {
                 text: "No"
-                onClicked: root.close()
+                onClicked: { root.close(); }
             }
         }
     }

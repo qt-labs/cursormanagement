@@ -36,7 +36,6 @@ CNButton {
         origin.y: root.height/2
     }
 
-
     NumberAnimation {
         id: returnAnimation
         target: rot
@@ -50,41 +49,41 @@ CNButton {
     transform: rot
 
     CursorNavigation.onHasCursorChanged: {
-        if (!hasCursor)
-            returnAnimation.start()
+        if (!hasCursor) {
+            returnAnimation.start();
+        }
     }
 
     function flip(angle, magnitude) {
         rot.angle = magnitude*45.0;
-        var a = angle * Math.PI/180.0
-        rot.axis.x = -Math.sin(a)
-        rot.axis.y = Math.cos(a)
-        rot.axis.z = 0
+        var a = angle * Math.PI/180.0;
+        rot.axis.x = -Math.sin(a);
+        rot.axis.y = Math.cos(a);
+        rot.axis.z = 0;
     }
 
     CursorNavigation.onMagnitudeChanged: {
-        flip(angle, magnitude)
+        flip(angle, magnitude);
     }
 
-
     CursorNavigation.onMovedUp: {
-        console.log("moved up ffs")
+        console.log("moved up ffs");
         flip(-90, 1);
-        returnAnimation.start()
+        returnAnimation.start();
     }
 
     CursorNavigation.onMovedDown: {
         flip(90, 1);
-        returnAnimation.start()
+        returnAnimation.start();
     }
 
     CursorNavigation.onMovedRight: {
         flip(0, 1);
-        returnAnimation.start()
+        returnAnimation.start();
     }
 
     CursorNavigation.onMovedLeft: {
         flip(180, 1);
-        returnAnimation.start()
+        returnAnimation.start();
     }
 }

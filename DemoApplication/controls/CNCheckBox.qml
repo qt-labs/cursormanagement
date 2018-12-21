@@ -8,6 +8,6 @@ CheckBox {
     CNCursorIndicator { cursorItem : parent }
 
     CursorNavigation.onActivated: {
-        root.toggle()
+        root.toggle();
     }
 }
