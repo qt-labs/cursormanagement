@@ -50,13 +50,13 @@ void setMagnitude(qreal angle, qreal magnitude);
 void setMagnitude(QVector2D vector);
 ```
 
-Move the cursor to the given direction using the given tolerance. Items that are exactly in the direction are preferred over items that just fall within the tolerance. The item that had the cursor will have its moved-signal emitted. If there is no item to be found, nothing happens.
+Move the cursor to the given direction using the angle +- the given tolerance. Units are in degrees. Angle is clockwise from the center of the current item with x-axis pointing to 0 degrees. Items that are exactly in the direction are preferred over items that just fall within the tolerance. The item that had the cursor will have its moved-signal emitted. If there is no item to be found, nothing happens.
 ```
 void move(qreal angle, qreal tolerance = 0);
 void move(QVector2D vector, qreal tolerance = 0);
 ```
 
-Finds the next item, without moving the cursor. If there is no item to be found, returns a null.
+Finds the next item, without moving the cursor. Units are in degrees. Angle is clockwise from the center of the current item with x-axis pointing to 0 degrees. If there is no item to be found, returns a null.
 ```
 QQuickItem *find(qreal angle, qreal tolerance = 0);
 QQuickItem *find(QVector2D vector, qreal tolerance = 0);
@@ -103,7 +103,9 @@ void escaped();
 
 ## Using CursorNavigation
 
-The way to define items as cursor navigable, is done via CursorNavigation's attached propert'acceptsCursor'. Use the read-only property 'hasCursor' to test if the item is selected. The example below shows how to define a button that is navigable:
+### Basics
+
+The way to define items as cursor navigable, is done via CursorNavigation's attached property 'acceptsCursor'. Use the read-only property 'hasCursor' to test if the item is selected. The example below shows how to define a button that is navigable:
 
 ```
 // CNButton.qml
@@ -127,12 +129,85 @@ Button {
 }
 ```
 
+### Scoping
+
 As CursorNavigation is about moving the active focus, it is possible to use FocusScopes with it. FocusScopes are useful when focus needs to be proxied to Item's children. The example below show how to have a "cursor scope", an item that accepts the cursor, but passes it on to the child items. It is also possible to limit the cursor's movement to the children using the CursorNavigation.trapsCursor property. To leave a scope that traps the cursor, define a escape target with the CursorNavigation.escapeTarget property.
 
-use:
--import in QML
--defining item as navigable
--input interface and connecting to it
--focus scoping and cursors
+```
+//combine existing focus mechanisms and cursor management to have cursor scopes
+
+CNButton {
+    id: homeButton
+    text: "home button (escape target)"
+}
+
+//define a container with cursor manageable contents
+Rectangle {
+    FocusScope {
+        anchors.fill: parent
+        //enable cursor navigation for the container
+        CursorNavigation.acceptsCursor: true
+        // (optionally) once the cursor enters the scope, limit the movement to this item's children
+        CursorNavigation.trapsCursor: true
+        //escape command would by default return the focus to the parent of this scope
+        //OR alternatively, we may define an escape target item, that receives the focus when leaving this scope
+        CursorNavigation.escapeTarget: homeButton
+
+        CNButton {
+            id : button1
+            //to forward selection from container, set this button to have the focus/cursor by default
+            focus: true
+        }
+
+        CNButton {
+            id : button2
+        }
+    }
+}
+```
+### Input binding
+
+The CursorNavigation attached object implements the functions needed for controlling the cursor. Bind different input  sources to these functions. In this example, the keyboard and a gamepad are used for moving the cursor.
+
+
+```
+Item {
+    FocusScope {
+        id: cnScope
+        anchors.fill: parent
+        CursorNavigation.acceptsCursor: true
+
+        ...
+    }
+}
+
+//navigation with keys...
+Keys {
+    //4 way moves
+    onRightPressed: cnScope.CursorNavigation.moveRight()
+    onLeftPressed: cnScope.CursorNavigation.moveLeft()
+    onUpPressed: cnScope.CursorNavigation.moveUp()
+    onDownPressed: cnScope.CursorNavigation.moveDown()
+}
+
+// ..or with gamepad
+Gamepad {
+    onAxisLeftXChanged: handleAxisChanged()
+    onAxisLeftYChanged: handleAxisChanged()
+
+
+    function handleAxisChanged: {
+        //move cursor providing just an angle and a tolerance around the angle
+        cnScope.CursorNavigation.move(calculateAngle(axisLeftX, axisLeftY), 10)
+    }
+
+    onButtonAChanged: {
+        if (buttonA)
+            cnScope.CursorNavigation.activate();
+    }
+
+}
+
+```
 
 
