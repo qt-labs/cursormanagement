@@ -108,10 +108,10 @@ ApplicationWindow {
         StackLayout {
             anchors.fill: parent
             currentIndex: tabBar.currentIndex
-            Page1 { }
-            Page2 { }
-            Page4 { }
-            Page6 { }
+            Basics { }
+            FlipButtons { }
+            Lists { }
+            MapView { }
         }
 
         CursorNavigation.acceptsCursor: false

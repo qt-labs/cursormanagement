@@ -9,7 +9,7 @@ Item {
 
     Text {
         id: text
-        text: "Welcome to the CursorNavigation demo!\nUse the arrow keys, keys a,w,s,d or a game controller to move the cursor between the UI elements."
+        text: "Welcome to the CursorNavigation demo!\nUse the arrow keys or a game controller to move the cursor between the UI elements."
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
