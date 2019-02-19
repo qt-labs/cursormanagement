@@ -100,6 +100,9 @@ ApplicationWindow {
         CNTabButton {
             text: qsTr("Map")
         }
+        CNTabButton {
+            text: qsTr("Redirects")
+        }
     }
 
     contentData: Item {
@@ -112,6 +115,7 @@ ApplicationWindow {
             FlipButtons { }
             Lists { }
             MapView { }
+            Redirects { }
         }
 
         CursorNavigation.acceptsCursor: false

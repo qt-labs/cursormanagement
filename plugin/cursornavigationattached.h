@@ -4,6 +4,8 @@
 //#include <qqml.h>
 #include <QObject>
 #include <QList>
+#include <QQmlListProperty>
+#include "redirect.h"
 
 class CursorNavigation;
 class QQuickItem;
@@ -22,7 +24,7 @@ class CursorNavigationAttached : public QObject
     Q_PROPERTY(bool trapsCursor READ trapsCursor WRITE setTrapsCursor NOTIFY trapsCursorChanged)
     //item to select when
     Q_PROPERTY(QQuickItem *escapeTarget READ escapeTarget WRITE setEscapeTarget NOTIFY escapeTargetChanged)
-
+    Q_PROPERTY(QQmlListProperty<Redirect> redirects READ redirects)
 
 public:
     CursorNavigationAttached(QQuickItem *parent);
@@ -32,6 +34,8 @@ public:
     bool hasCursor() const;
     bool trapsCursor() const;
     QQuickItem *escapeTarget() const;
+    QQmlListProperty<Redirect> redirects();
+
     /* indicates if the item is currently available for the navigation.
      * item might not be availble if it is disabled, invisible, outside of its
      * parent's geometry or simply not accepting cursor
@@ -93,6 +97,11 @@ private:
     void setHasCursor(bool hasCursor);
     //QList<CursorNavigationAttached*> &siblings();
 
+    static void appendRedirect(QQmlListProperty<Redirect> *property, Redirect *redirect);
+    static int redirectCount(QQmlListProperty<Redirect> *property);
+    static Redirect *redirect(QQmlListProperty<Redirect> *property, int index);
+    static void clearRedirects(QQmlListProperty<Redirect> *property);
+
     CursorNavigation *m_cursorNavigation;
     CursorNavigationAttached *m_parentNavigable;
     QList<CursorNavigationAttached*> m_children;
@@ -103,6 +112,7 @@ private:
 
     friend class CursorNavigation;
     QQuickItem * m_escapeTarget;
+    QVector<Redirect*> m_redirects;
 };
 
 #endif // CURSORNAVIGATIONATTACHED_H

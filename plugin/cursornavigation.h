@@ -25,10 +25,8 @@ public:
     //void setMagnitude(const QVector2D& vector);
     //move the cursor
     bool move(qreal angle, qreal tolerance, bool discrete);
-    bool move(const QVector2D& vector, qreal tolerance, bool discrete);
     //find the next item without moving the cursor
-    CursorNavigationAttached *find(qreal angle, qreal tolerance, bool discrete);
-    CursorNavigationAttached *find(const QVector2D& vector, qreal tolerance, bool discrete);
+    QQuickItem *find(qreal angle, qreal tolerance, bool discrete);
     bool action(Action action);
 
     static CursorNavigationAttached *qmlAttachedProperties(QObject *object);

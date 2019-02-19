@@ -16,7 +16,8 @@ SOURCES += \
     cursornavigationalgorithm.cpp \
     spatialnavigation4dir.cpp \
     inputtypes.cpp \
-    spatialnavigation360.cpp
+    spatialnavigation360.cpp \
+    redirect.cpp
 
 HEADERS += \
         plugin.h \
@@ -26,7 +27,8 @@ HEADERS += \
     inputtypes.h \
     cursornavigationalgorithm.h \
     spatialnavigation4dir.h \
-    spatialnavigation360.h
+    spatialnavigation360.h \
+    redirect.h
 
 pluginfiles.files += qmldir
 

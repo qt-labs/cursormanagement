@@ -92,10 +92,10 @@ void CursorNavigationAttached::setMagnitude(QVector2D vector)
 
 void CursorNavigationAttached::move(qreal angle, qreal tolerance)
 {
-    qWarning() << "move";
-    qreal a = qDegreesToRadians(angle);
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
     if (m_cursorNavigation) {
+        qWarning() << "move";
+        qreal a = qDegreesToRadians(angle);
+        qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
         if (m_cursorNavigation->move(a, t, false) && item)
             item->moved(a,t);
@@ -104,10 +104,10 @@ void CursorNavigationAttached::move(qreal angle, qreal tolerance)
 
 void CursorNavigationAttached::move(QVector2D vector, qreal tolerance)
 {
-    qWarning() << "move (vector)";
-    qreal a = qAtan2(vector.y(), vector.x());
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
     if (m_cursorNavigation) {
+        qWarning() << "move (vector)";
+        qreal a = qAtan2(vector.y(), vector.x());
+        qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
         if (m_cursorNavigation->move(a, t, false) && item)
             item->moved(a,t);
@@ -116,24 +116,20 @@ void CursorNavigationAttached::move(QVector2D vector, qreal tolerance)
 
 QQuickItem *CursorNavigationAttached::find(qreal angle, qreal tolerance)
 {
-    qreal a = qDegreesToRadians(angle);
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
     if (m_cursorNavigation) {
-        CursorNavigationAttached *item = m_cursorNavigation->find(a, t, false);
-        if (item)
-            return item->item();
+        qreal a = qDegreesToRadians(angle);
+        qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+        return m_cursorNavigation->find(a, t, false);
     }
     return nullptr;
 }
 
 QQuickItem *CursorNavigationAttached::find(QVector2D vector, qreal tolerance)
 {
-    qreal a = qAtan2(vector.y(), vector.x());
-    qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
     if (m_cursorNavigation) {
-        CursorNavigationAttached *item = m_cursorNavigation->find(a, t, false);
-        if (item)
-            return item->item();
+        qreal a = qAtan2(vector.y(), vector.x());
+        qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
+        return m_cursorNavigation->find(a, t, false);
     }
     return nullptr;
 }
@@ -234,6 +230,15 @@ QQuickItem *CursorNavigationAttached::escapeTarget() const
     return m_escapeTarget;
 }
 
+QQmlListProperty<Redirect> CursorNavigationAttached::redirects()
+{
+    return QQmlListProperty<Redirect>(this, this,
+                                      &CursorNavigationAttached::appendRedirect,
+                                      &CursorNavigationAttached::redirectCount,
+                                      &CursorNavigationAttached::redirect,
+                                      &CursorNavigationAttached::clearRedirects);
+}
+
 bool CursorNavigationAttached::available() const
 {
     if (m_acceptsCursor && item()->isVisible() && item()->isEnabled()) {
@@ -250,5 +255,29 @@ void CursorNavigationAttached::setHasCursor(bool hasCursor)
         m_hasCursor=hasCursor;
         emit hasCursorChanged(m_hasCursor);
     }
+}
+
+void CursorNavigationAttached::appendRedirect(QQmlListProperty<Redirect> *property, Redirect *redirect)
+{
+    CursorNavigationAttached *cna = static_cast<CursorNavigationAttached*>(property->object);
+    cna->m_redirects.append(redirect);
+}
+
+int CursorNavigationAttached::redirectCount(QQmlListProperty<Redirect> *property)
+{
+    CursorNavigationAttached *cna = static_cast<CursorNavigationAttached*>(property->object);
+    return cna->m_redirects.count();
+}
+
+Redirect *CursorNavigationAttached::redirect(QQmlListProperty<Redirect> *property, int index)
+{
+    CursorNavigationAttached *cna = static_cast<CursorNavigationAttached*>(property->object);
+    return cna->m_redirects.at(index);
+}
+
+void CursorNavigationAttached::clearRedirects(QQmlListProperty<Redirect> *property)
+{
+    CursorNavigationAttached *cna = static_cast<CursorNavigationAttached*>(property->object);
+    cna->m_redirects.clear();
 }
 

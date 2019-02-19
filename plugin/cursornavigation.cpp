@@ -3,6 +3,7 @@
 #include "spatialnavigation4dir.h"
 #include <QQuickWindow>
 #include <QQuickItem>
+#include <QtMath>
 
 const char CursorNavigation::windowPropertyName[] = "cursor_navigation";
 
@@ -22,27 +23,38 @@ CursorNavigation::CursorNavigation(QQuickWindow *parent)
 
 bool CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
 {
-    CursorNavigationAttached *nextItem = find(angle, tolerance, discrete);
+    QQuickItem *foundItem = find(angle, tolerance, discrete);
+    CursorNavigationAttached *nextItem = cursorNavigationAttachment(foundItem);
 
     if (nextItem) {
         setCursorOnItem(nextItem);
+        return true;
+    } else if (foundItem) {
+        foundItem->forceActiveFocus();
         return true;
     }
     return false;
 }
 
-CursorNavigationAttached *CursorNavigation::find(qreal angle, qreal tolerance, bool discrete)
+QQuickItem *CursorNavigation::find(qreal angle, qreal tolerance, bool discrete)
 {
+    if (!m_currentItem)
+        return defaultItem()->item();
+
+    if (m_currentItem->m_redirects.size()) {
+        for (auto redirect : m_currentItem->m_redirects) {
+            if (redirect->angleIsIncluded(angle)) {
+                if (!redirect->target())
+                    qWarning() << "Redirect target is null";
+                return redirect->target();
+            }
+        }
+    }
+
     CursorNavigationAttached *nextItem = nullptr;
     CursorNavigationAttached *parent = m_currentItem ?
                 m_currentItem->m_parentNavigable :
                 m_rootItem;
-
-    if (!m_currentItem)
-        return defaultItem();
-
-    //qWarning() << "find next item, angle = " << angle << " tolerance = " << tolerance << " discrete = " << discrete;
-
     QList<CursorNavigationAttached*> candidates;
 
     do {
@@ -64,7 +76,7 @@ CursorNavigationAttached *CursorNavigation::find(qreal angle, qreal tolerance, b
         nextItem = m_navigation360.getNextCandidate(candidates, m_currentItem, cmd);
     }
 
-    return nextItem;
+    return nextItem ? nextItem->item() : nullptr;
 }
 
 bool CursorNavigation::action(Action action)
