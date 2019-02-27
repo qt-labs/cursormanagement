@@ -1,5 +1,5 @@
-QT += testlib
-QT -= gui
+QT += testlib quick
+#QT -= gui
 
 CONFIG += qt console warn_on depend_includepath testcase
 CONFIG -= app_bundle
@@ -8,3 +8,7 @@ TEMPLATE = app
 
 SOURCES += \ 
     tst_cursornavigation.cpp
+INCLUDEPATH += ../plugin
+
+DISTFILES += \
+    basics.qml

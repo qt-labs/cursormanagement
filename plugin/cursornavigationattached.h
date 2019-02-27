@@ -18,11 +18,9 @@ class CursorNavigationAttached : public QObject
     Q_PROPERTY(bool acceptsCursor READ acceptsCursor WRITE setAcceptsCursor NOTIFY acceptsCursorChanged)
     //indicates if item is currently selected, indicated also by activeFocus property
     Q_PROPERTY(bool hasCursor READ hasCursor NOTIFY hasCursorChanged)
-    //indicates if one of children is currently selected
-    Q_PROPERTY(bool childHasCursor READ hasCursor NOTIFY hasCursorChanged)
     //traps cursor. a trapped cursor can not be traversed outside of the item that traps it until the escape input is given
     Q_PROPERTY(bool trapsCursor READ trapsCursor WRITE setTrapsCursor NOTIFY trapsCursorChanged)
-    //item to select when
+    //item to select when escaping
     Q_PROPERTY(QQuickItem *escapeTarget READ escapeTarget WRITE setEscapeTarget NOTIFY escapeTargetChanged)
     Q_PROPERTY(QQmlListProperty<Redirect> redirects READ redirects)
 
@@ -95,7 +93,6 @@ private slots:
 
 private:
     void setHasCursor(bool hasCursor);
-    //QList<CursorNavigationAttached*> &siblings();
 
     static void appendRedirect(QQmlListProperty<Redirect> *property, Redirect *redirect);
     static int redirectCount(QQmlListProperty<Redirect> *property);
