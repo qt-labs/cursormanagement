@@ -19,10 +19,11 @@ public:
 private slots:
     void test_basics();
     void test_callbacks();
-    void test_spatial4Directions();
-    void test_spatial360();
+    void test_navigation4Directions();
+    void test_navigation360();
     void testRedirects();
-    void testTargetDeletions();
+    void test_trapping();
+    void test_targetDeletions();
 };
 
 TestCursorNavigation::TestCursorNavigation()
@@ -119,6 +120,7 @@ void TestCursorNavigation::test_basics()
     //QVERIFY(item2IndirectChild->hasActiveFocus());
     QVERIFY(hasCursor2.read().toBool());
 
+    delete view;
 }
 
 void TestCursorNavigation::test_callbacks()
@@ -126,12 +128,103 @@ void TestCursorNavigation::test_callbacks()
 
 }
 
-void TestCursorNavigation::test_spatial4Directions()
+void TestCursorNavigation::test_navigation4Directions()
 {
     //test the spatial algorithm in the basic 4 directional case
+    QQuickView *view = new QQuickView;
+    view->setSource(QUrl::fromLocalFile(QFINDTESTDATA("4WayTest.qml")));
+    QVERIFY(view->status() == QQuickView::Ready);
+
+    view->show();
+    view->requestActivate();
+
+    QVERIFY(QTest::qWaitForWindowActive(view));
+    QTRY_COMPARE(view, qGuiApp->focusWindow());
+
+    QQuickItem *root = view->rootObject();
+    QQuickItem *left = root->findChild<QQuickItem*>(QLatin1String("left"));
+    QQuickItem *right = root->findChild<QQuickItem*>(QLatin1String("right"));
+    QQuickItem *right1 = root->findChild<QQuickItem*>(QLatin1String("right1"));
+    QQuickItem *right2 = root->findChild<QQuickItem*>(QLatin1String("right2"));
+    QQuickItem *top = root->findChild<QQuickItem*>(QLatin1String("top"));
+    QQuickItem *bottom = root->findChild<QQuickItem*>(QLatin1String("bottom"));
+    QQuickItem *center = root->findChild<QQuickItem*>(QLatin1String("center"));
+
+    QObject *leftAttached = left->findChild<QObject*>(QLatin1String("leftAttached"));
+
+    QQmlProperty leftHasCursor(left, "CursorNavigation.hasCursor", qmlContext(left));
+    QQmlProperty rightHasCursor(right, "CursorNavigation.hasCursor", qmlContext(right));
+    QQmlProperty right1HasCursor(right1, "CursorNavigation.hasCursor", qmlContext(right1));
+    QQmlProperty right2HasCursor(right2, "CursorNavigation.hasCursor", qmlContext(right2));
+    QQmlProperty topHasCursor(top, "CursorNavigation.hasCursor", qmlContext(top));
+    QQmlProperty bottomHasCursor(bottom, "CursorNavigation.hasCursor", qmlContext(bottom));
+    QQmlProperty centerHasCursor(center, "CursorNavigation.hasCursor", qmlContext(center));
+
+
+    /* test all directions with a direct target ie. in projection,
+     * with the target being out of projection, and without any potential
+     * target in that direction (a miss) */
+    left->forceActiveFocus();
+    QVERIFY(leftHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveLeft"); //miss
+    QVERIFY(leftHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveRight");
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveDown");
+    QVERIFY(bottomHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveDown"); //miss
+    QVERIFY(bottomHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveUp");
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveRight");
+    QVERIFY(rightHasCursor.read().toBool());
+
+    //test that from 2 items within projection, the closest is picked
+    QMetaObject::invokeMethod(leftAttached, "moveRight");
+    QVERIFY(right1HasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveRight"); //miss
+    QVERIFY(right1HasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveLeft");
+    QMetaObject::invokeMethod(leftAttached, "moveLeft");
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveUp");
+    QVERIFY(topHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveUp"); //miss
+    QVERIFY(topHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveDown");
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveLeft");
+    QVERIFY(leftHasCursor.read().toBool());
+
+    //moves to item outside of projection
+    QMetaObject::invokeMethod(leftAttached, "moveDown");
+    QVERIFY(bottomHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveRight");
+    QVERIFY(rightHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveUp");
+    QVERIFY(topHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(leftAttached, "moveLeft");
+    QVERIFY(leftHasCursor.read().toBool());
+
+    delete view;
 }
 
-void TestCursorNavigation::test_spatial360()
+void TestCursorNavigation::test_navigation360()
 {
 
 }
@@ -141,7 +234,12 @@ void TestCursorNavigation::testRedirects()
 
 }
 
-void TestCursorNavigation::testTargetDeletions()
+void TestCursorNavigation::test_trapping()
+{
+
+}
+
+void TestCursorNavigation::test_targetDeletions()
 {
 
 }

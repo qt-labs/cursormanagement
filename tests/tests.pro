@@ -11,4 +11,6 @@ SOURCES += \
 INCLUDEPATH += ../plugin
 
 DISTFILES += \
-    basics.qml
+    basics.qml \
+    CNRect.qml \
+    4WayTest.qml
