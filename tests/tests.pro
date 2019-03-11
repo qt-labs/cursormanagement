@@ -13,4 +13,5 @@ INCLUDEPATH += ../plugin
 DISTFILES += \
     basics.qml \
     CNRect.qml \
-    4WayTest.qml
+    4WayTest.qml \
+    reparenting.qml

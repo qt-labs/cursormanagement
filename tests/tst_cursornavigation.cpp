@@ -1,4 +1,5 @@
 #include <QtTest>
+#include <qqmlapplicationengine.h>
 
 #include "cursornavigationattached.h"
 #include <QSignalSpy>
@@ -21,9 +22,10 @@ private slots:
     void test_callbacks();
     void test_navigation4Directions();
     void test_navigation360();
-    void testRedirects();
+    void test_redirects();
     void test_trapping();
     void test_targetDeletions();
+    void test_reparenting();
 };
 
 TestCursorNavigation::TestCursorNavigation()
@@ -229,7 +231,7 @@ void TestCursorNavigation::test_navigation360()
 
 }
 
-void TestCursorNavigation::testRedirects()
+void TestCursorNavigation::test_redirects()
 {
 
 }
@@ -242,6 +244,92 @@ void TestCursorNavigation::test_trapping()
 void TestCursorNavigation::test_targetDeletions()
 {
 
+}
+
+void TestCursorNavigation::test_reparenting()
+{
+    QQmlApplicationEngine *engine = new QQmlApplicationEngine(QFINDTESTDATA("reparenting.qml"));
+
+    QQuickWindow *window0 = nullptr;
+    QQuickWindow *window1 = nullptr;
+    QQuickWindow *window2 = nullptr;
+
+    for (auto i : engine->rootObjects()) {
+        if (i->objectName()=="window0") {
+            window0 = qobject_cast<QQuickWindow*>(i);
+        }
+    }
+
+    QVERIFY(window0 != nullptr);
+
+    window1 = window0->findChild<QQuickWindow*>(QLatin1String("window1"));
+    window2 = window0->findChild<QQuickWindow*>(QLatin1String("window2"));
+
+    QVERIFY(window1 != nullptr);
+    QVERIFY(window2 != nullptr);
+
+    window0->show();
+    window1->show();
+    window2->show();
+    window0->requestActivate();
+
+    QVERIFY(QTest::qWaitForWindowActive(window0));
+    QTRY_COMPARE(window0, qGuiApp->focusWindow());
+
+    QQuickItem *win0Item0 = window0->findChild<QQuickItem*>(QLatin1String("win0Item0"));
+    QQuickItem *movedItem0 = window0->findChild<QQuickItem*>(QLatin1String("movedItem0"));
+    QQuickItem *movedItem1 = window0->findChild<QQuickItem*>(QLatin1String("movedItem1"));
+    QQuickItem *win1Item0 = window1->findChild<QQuickItem*>(QLatin1String("win1Item0"));
+
+    QObject *win0Item0Attached = win0Item0->findChild<QObject*>(QLatin1String("win0Item0Attached"));
+    QObject *win1Item0Attached = win1Item0->findChild<QObject*>(QLatin1String("win1Item0Attached"));
+    QObject *movedItem0Attached = movedItem0->findChild<QObject*>(QLatin1String("movedItem0Attached"));
+
+    QQmlProperty win0Item0HasCursor(win0Item0, "CursorNavigation.hasCursor", qmlContext(win0Item0));
+    QQmlProperty movedItem0HasCursor(movedItem0, "CursorNavigation.hasCursor", qmlContext(movedItem0));
+    QQmlProperty movedItem1HasCursor(movedItem1, "CursorNavigation.hasCursor", qmlContext(movedItem1));
+    QQmlProperty win1Item0HasCursor(win1Item0, "CursorNavigation.hasCursor", qmlContext(win1Item0));
+
+    QVERIFY(win0Item0HasCursor.isValid());
+    QVERIFY(movedItem0HasCursor.isValid());
+
+    //move items from the starting window to the next window that already has cursor navigation available. see that navigation works
+    QMetaObject::invokeMethod(window0, "reparent");
+
+    window1->requestActivate();
+
+    QVERIFY(QTest::qWaitForWindowActive(window1));
+    QTRY_COMPARE(window1, qGuiApp->focusWindow());
+
+    win1Item0->forceActiveFocus();
+    QVERIFY(win1Item0HasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(win1Item0Attached, "moveRight");
+    QVERIFY(movedItem0HasCursor.read().toBool());
+    QMetaObject::invokeMethod(win1Item0Attached, "moveRight");
+    QVERIFY(movedItem1HasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(win1Item0Attached, "moveLeft");
+    QMetaObject::invokeMethod(win1Item0Attached, "moveLeft");
+    QVERIFY(win1Item0HasCursor.read().toBool());
+
+    //move items to the third window that does not have cursor navigation available. see that navigation works
+    QMetaObject::invokeMethod(window1, "reparent");
+
+    QVERIFY(win1Item0HasCursor.read().toBool());
+    QMetaObject::invokeMethod(win1Item0Attached, "moveRight");
+    QVERIFY(win1Item0HasCursor.read().toBool());
+
+    window2->requestActivate();
+    QVERIFY(QTest::qWaitForWindowActive(window2));
+    QTRY_COMPARE(window2, qGuiApp->focusWindow());
+
+    movedItem0->forceActiveFocus();
+    QVERIFY(movedItem0HasCursor.read().toBool());
+    QMetaObject::invokeMethod(movedItem0Attached, "moveRight");
+    QVERIFY(movedItem1HasCursor.read().toBool());
+
+    delete engine;
 }
 
 QTEST_MAIN(TestCursorNavigation)

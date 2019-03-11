@@ -137,6 +137,7 @@ CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *objec
     // TODO: what if an object, with an already attached object, gets reparented (say, in another window?)
     // with or without a focus system.
 
+    qWarning() << "Created a new CN attachment";
     return new CursorNavigationAttached(item);
 }
 
@@ -149,6 +150,7 @@ CursorNavigation *CursorNavigation::cursorNavigationForWindow(QQuickWindow *wind
     if (!oldCursorNavigation.isNull())
         return oldCursorNavigation.value<CursorNavigation *>();
 
+    qWarning() << "Created a new CN engine";
     CursorNavigation *cursorNavigation = new CursorNavigation(window);
     window->setProperty(windowPropertyName, QVariant::fromValue(cursorNavigation));
 
