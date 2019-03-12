@@ -15,4 +15,5 @@ DISTFILES += \
     CNRect.qml \
     4WayTest.qml \
     reparenting.qml \
-    reparenting2.qml
+    reparenting2.qml \
+    360Test.qml

@@ -228,7 +228,87 @@ void TestCursorNavigation::test_navigation4Directions()
 
 void TestCursorNavigation::test_navigation360()
 {
+    //test the spatial algorithm in the 360 case
+    QQuickView *view = new QQuickView;
+    view->setSource(QUrl::fromLocalFile(QFINDTESTDATA("360Test.qml")));
+    QVERIFY(view->status() == QQuickView::Ready);
 
+    view->show();
+    view->requestActivate();
+
+    QVERIFY(QTest::qWaitForWindowActive(view));
+    QTRY_COMPARE(view, qGuiApp->focusWindow());
+
+    QQuickItem *root = view->rootObject();
+    QQuickItem *center = root->findChild<QQuickItem*>(QLatin1String("center"));
+    QQuickItem *d0 = root->findChild<QQuickItem*>(QLatin1String("d0"));
+    QQuickItem *d45 = root->findChild<QQuickItem*>(QLatin1String("d45"));
+    QQuickItem *d90 = root->findChild<QQuickItem*>(QLatin1String("d90"));
+    QQuickItem *d135 = root->findChild<QQuickItem*>(QLatin1String("d135"));
+    QQuickItem *d180 = root->findChild<QQuickItem*>(QLatin1String("d180"));
+    QQuickItem *d225 = root->findChild<QQuickItem*>(QLatin1String("d225"));
+    QQuickItem *d270 = root->findChild<QQuickItem*>(QLatin1String("d270"));
+    QQuickItem *d315 = root->findChild<QQuickItem*>(QLatin1String("d315"));
+
+    QQmlProperty centerHasCursor(center, "CursorNavigation.hasCursor", qmlContext(center));
+    QQmlProperty d0HasCursor(d0, "CursorNavigation.hasCursor", qmlContext(d0));
+    QQmlProperty d45HasCursor(d45, "CursorNavigation.hasCursor", qmlContext(d45));
+    QQmlProperty d90HasCursor(d90, "CursorNavigation.hasCursor", qmlContext(d90));
+    QQmlProperty d135HasCursor(d135, "CursorNavigation.hasCursor", qmlContext(d135));
+    QQmlProperty d180HasCursor(d180, "CursorNavigation.hasCursor", qmlContext(d180));
+    QQmlProperty d225HasCursor(d225, "CursorNavigation.hasCursor", qmlContext(d225));
+    QQmlProperty d270HasCursor(d270, "CursorNavigation.hasCursor", qmlContext(d270));
+    QQmlProperty d315HasCursor(d315, "CursorNavigation.hasCursor", qmlContext(d315));
+
+    QObject *centerAttached = center->findChild<QObject*>(QLatin1String("centerAttached"));
+
+    center->forceActiveFocus();
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 0), Q_ARG(qreal, 0));
+    QVERIFY(d0HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -180), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 45), Q_ARG(qreal, 0));
+    QVERIFY(d45HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -135), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 90), Q_ARG(qreal, 0));
+    QVERIFY(d90HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -90), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 135), Q_ARG(qreal, 0));
+    QVERIFY(d135HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -45), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 180), Q_ARG(qreal, 0));
+    QVERIFY(d180HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 0), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 225), Q_ARG(qreal, 0));
+    QVERIFY(d225HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -315), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 270), Q_ARG(qreal, 0));
+    QVERIFY(d270HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -270), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 315), Q_ARG(qreal, 0));
+    QVERIFY(d315HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -225), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 360), Q_ARG(qreal, 0));
+    QVERIFY(d0HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 180), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
 }
 
 void TestCursorNavigation::test_redirects()
