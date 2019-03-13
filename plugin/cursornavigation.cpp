@@ -134,9 +134,6 @@ CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *objec
 
     QQuickItem *item = static_cast<QQuickItem *>(object);
 
-    // TODO: what if an object, with an already attached object, gets reparented (say, in another window?)
-    // with or without a focus system.
-
     qWarning() << "Created a new CN attachment";
     return new CursorNavigationAttached(item);
 }
@@ -227,6 +224,14 @@ void CursorNavigation::registerItem(CursorNavigationAttached* item)
         m_rootItem->m_children.append(item);
         item->m_parentNavigable=m_rootItem;
     }
+
+    /* TODO reparenting from window to another kind of works, but reparenting
+    * within a window not so well. problems arise when reaprenting items
+    * contained in an item that is also navigable. for this to work, we would
+    * need to detect all parent changes, including items non navigable parents
+    * and grandparents, and reorganize the internal tree when needed.
+    * For now, consider reparenting as not recommended
+    */
 }
 
 void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
@@ -238,7 +243,6 @@ void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
     if (item->m_parentNavigable)
         item->m_parentNavigable->m_children.removeOne(item);
 
-    //TODO if the item that is being unregistered has children, they should be reassigned to the item's parent
 }
 
 CursorNavigationAttached *CursorNavigation::defaultItem()

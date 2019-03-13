@@ -1,11 +1,6 @@
 #include "inputtypes.h"
 #include <QtMath>
 
-const CursorNavigationCommand CursorNavigationCommand::Up(-M_PI_2, 0);
-const CursorNavigationCommand CursorNavigationCommand::Down(M_PI_2, 0);
-const CursorNavigationCommand CursorNavigationCommand::Left(M_PI, 0);
-const CursorNavigationCommand CursorNavigationCommand::Right(0, 0);
-
 CursorNavigationCommand::CursorNavigationCommand()
     :angle(-1), angleTolerance(-1), action(NoAction)
 {}

@@ -29,11 +29,6 @@ struct CursorNavigationCommand
     qreal angleTolerance;  //0 to pi
     Action action;
 
-    static const CursorNavigationCommand Up;
-    static const CursorNavigationCommand Down;
-    static const CursorNavigationCommand Left;
-    static const CursorNavigationCommand Right;
-
     //test if given angle is between given sector. sector defined clockwise from begin to end
     static bool angleIsBetween(qreal angle, qreal begin, qreal end);
 
@@ -42,9 +37,10 @@ struct CursorNavigationCommand
 
 };
 
-/*feedback datatype returned for commands, describing command results
- *this could be used for example to indicate that a end of a list has been reached,
- *that might produce force feedback on certain inut devices
+/* TODO feedback
+ * feedback datatype returned for commands, describing command results
+ * this could be used for example to indicate that a end of a list has been reached,
+ * that might produce force feedback on certain inut devices
  */
 enum CommandResult
 {

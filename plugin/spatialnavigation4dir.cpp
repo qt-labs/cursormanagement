@@ -52,7 +52,7 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
     const QRectF currentItemSceneRect = currentItem->item()->mapRectToScene(QRectF( 0, 0,
                                           currentItem->item()->width(), currentItem->item()->height() ));
 
-    //NOTICE: overlapping candidates will be ignored for now (TODO, this needs to be changed)
+    //NOTICE: candidates overlapping with current item will be ignored for now (TODO, this needs to be changed)
 
     qreal right_start = -M_PI_4;
     qreal right_end = M_PI_4;

@@ -328,6 +328,11 @@ void TestCursorNavigation::test_targetDeletions()
 
 void TestCursorNavigation::test_reparenting()
 {
+    /* notice, that reparenting from window to another works, but reparenting
+     * within a window not so well. problems there arise when reaprenting items
+     * contained in an item that is also navigable. reparenting2.qml covers this
+     */
+
     QQmlApplicationEngine *engine = new QQmlApplicationEngine(QFINDTESTDATA("reparenting.qml"));
 
     QQuickWindow *window0 = nullptr;

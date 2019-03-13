@@ -112,8 +112,8 @@ ApplicationWindow {
             anchors.fill: parent
             currentIndex: tabBar.currentIndex
             Basics { }
-            FlipButtons { }
             Lists { }
+            FlipButtons { }
             MapView { }
             Redirects { }
         }
