@@ -309,6 +309,11 @@ void TestCursorNavigation::test_navigation360()
     QVERIFY(d0HasCursor.read().toBool());
     QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 180), Q_ARG(qreal, 0));
     QVERIFY(centerHasCursor.read().toBool());
+
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, 405), Q_ARG(qreal, 0));
+    QVERIFY(d45HasCursor.read().toBool());
+    QMetaObject::invokeMethod(centerAttached, "move", Q_ARG(qreal, -135), Q_ARG(qreal, 0));
+    QVERIFY(centerHasCursor.read().toBool());
 }
 
 void TestCursorNavigation::test_redirects()

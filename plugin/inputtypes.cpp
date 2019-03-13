@@ -29,9 +29,12 @@ bool CursorNavigationCommand::angleIsBetween(qreal angle, qreal begin, qreal end
 
 qreal CursorNavigationCommand::fitAngle(qreal angle)
 {
+    if (angle >= 2.0*M_PI)
+        angle = std::fmod(angle, 2.0*M_PI);
+
     if (angle > M_PI)
-        return -M_PI + std::fmod(angle ,M_PI);
+        return -M_PI + std::fmod(angle, M_PI);
     else if (angle < -M_PI)
-        return M_PI + std::fmod(angle ,M_PI);
+        return M_PI + std::fmod(angle, M_PI);
     return angle;
 }
