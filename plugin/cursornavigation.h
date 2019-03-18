@@ -11,6 +11,8 @@
 #include <qqml.h>
 #include <QStack>
 
+//TODO remove useless debug prints and change over to categorized logging
+
 class QQuickItem;
 
 class CursorNavigation : public QObject

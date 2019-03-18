@@ -108,6 +108,7 @@ private:
     bool m_trapsCursor;
 
     friend class CursorNavigation;
+    //TODO detect if the escape target is deleted
     QQuickItem * m_escapeTarget;
     QVector<Redirect*> m_redirects;
 };

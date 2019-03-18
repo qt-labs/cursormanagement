@@ -241,6 +241,13 @@ QQmlListProperty<Redirect> CursorNavigationAttached::redirects()
 
 bool CursorNavigationAttached::available() const
 {
+    /* TODO think again if this is necessary or even limiting for the user
+     * reasons: all the conditions tested here can be done in the qml by the user if
+     * they see it necessary, eg; CursorNavigation.acceptsCursor : visible it could be useful to allow cursor also on
+     * disabled items (testing the intersection in qml is not that
+     * straightforward but enabling clipping sets clipped items invisible)
+     */
+
     if (m_acceptsCursor && item()->isVisible() && item()->isEnabled()) {
         QRectF parentRect(0,0,m_parentNavigable->item()->width(), m_parentNavigable->item()->height());
         QRectF thisRect = item()->mapRectToItem(m_parentNavigable->item(), QRectF(0,0,item()->width(), item()->height()));

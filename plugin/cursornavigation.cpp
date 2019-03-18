@@ -225,6 +225,16 @@ void CursorNavigation::registerItem(CursorNavigationAttached* item)
         item->m_parentNavigable=m_rootItem;
     }
 
+    /* TODO fix unregistering and reregistering navigable items with navigable children
+     *
+     * currently, for est results, items should define if they accpet cursor already
+     * at the construction time. this will ensure that the tree is properly constructed
+     * currently, unregisterin a container, is going to unregister all of its
+     * navigable children too. reregisterin gthe container will reregister the children
+     * regitering a container after its navigable children have been registered,
+     * will not list the children under the container but as its siblings
+     */
+
     /* TODO reparenting from window to another kind of works, but reparenting
     * within a window not so well. problems arise when reaprenting items
     * contained in an item that is also navigable. for this to work, we would
