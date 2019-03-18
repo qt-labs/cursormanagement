@@ -42,6 +42,11 @@ Set a target for moving to cursor to in case of the escape-input.
 QQuickItem* escapeTarget
 ```
 
+Set a list of redirects to override the navigation algorithm on certain angles and redirect the cursor to predefined items.
+```
+list redirects
+```
+
 ### Methods
 
 Just for passing forward information of intended movement, eg. analog joystick movement. Does not affect the cursor in any way. Changes are received by the item that currently has the cursor.
@@ -210,4 +215,42 @@ Gamepad {
 
 ```
 
+### Redirecting
+
+Use redirects property to define cursor movement manually.
+
+```
+//A row of buttons, from left to right, where the cursor wraps between last and first buttons
+RowLayout {
+
+    CNButton {
+        id: firstButton
+        text: "Button 1"
+
+        //moving left will move to the end of the row
+        CursorNavigation.redirects: [
+            Redirect { start: 135; end: 225; target: lastButton }
+        ]
+    }
+
+    CNButton {
+        text: "Button 2"
+    }
+
+    CNButton {
+        text: "Button 3"
+    }
+
+    CNButton {
+        id: lastButton
+        text: "Button 4"
+
+        //moving right will move to the beginning of the row
+        CursorNavigation.redirects: [
+            Redirect { start: 315; end: 45; target: firstButton }
+        ]
+    }
+
+}
+```
 
