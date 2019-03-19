@@ -1,4 +1,9 @@
 
+## Notice
+
+This module, the plugin and the examples are all very much work in progress, so changes to the code, naming and API are to be expected!
+
+
 ## What is it for?
 
 Cursor is an indicator for the target of user interactions in a GUI. In this case, it's more specifically a selector for individual UI elements, such as buttons, and not completely freely moving, like a mouse pointer. The purpose of the CursorNavigation plugin is to provide a generic way of enabling cursor navigation in QML UIs with minimal configuration and ease of use in mind. Minimal configuration, in this case, would be in comparison to eg. qt's existing key navigation, where the navigation path has to be defined explicitly on a per element basis. CursorNavigation ships as a plugin for Qt and is loaded by simply importing it in QML, usable right from the beginning of the ui development.
@@ -6,7 +11,7 @@ Cursor is an indicator for the target of user interactions in a GUI. In this cas
 
 ## How does it work?
 
-CursorNavigation works by allowing the developer to define individual QML elements as navigable. The framework's backend keeps track of the navigable items and their parent-child relations and position and geometry on the UI. Moving the cursor is handled by algorithms, and is based just on the location and geometry of the items. There are 2 algorithm for spatial navigation: 4-way and free-directional. The simpler 4-way navigation is well suited for traditional, rectangular and structured UIs, while the 360-algorithm allows moving freely to any direction.
+CursorNavigation works by allowing the developer to define individual QML elements as navigable. The framework's backend keeps track of the navigable items and their parent-child relations and position and geometry on the UI. Moving the cursor is handled by algorithms, and is based just on the location and geometry of the items. There are 2 algorithms for spatial navigation: 4-way and free-directional. The simpler 4-way navigation is well suited for traditional, rectangular and structured UIs, while the 360-algorithm allows moving freely to any direction.
 
 There may be one instance of the CursorNavigation backend per window and one item per window having the cursor. Moving the cursor is also moving the active focus between the items. This means that inputs are directed on the item that has the cursor and that the cursor movement can be refined using Qt's FocusScopes.
 
@@ -106,7 +111,7 @@ void movedBack();
 void escaped();
 ```
 
-## Using CursorNavigation
+## Examples of using CursorNavigation
 
 ### Basics
 
