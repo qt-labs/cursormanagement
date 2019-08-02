@@ -107,7 +107,9 @@ public slots:
     void moveForward();
     void moveBack();
     void escape();
-
+    /* Returns the item that currently has the cursor
+     */
+    QQuickItem *currentItem();
 
 signals:
     void acceptsCursorChanged(bool acceptsCursor);

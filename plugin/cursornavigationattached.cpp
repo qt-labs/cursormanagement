@@ -242,6 +242,14 @@ void CursorNavigationAttached::escape()
     }
 }
 
+QQuickItem *CursorNavigationAttached::currentItem()
+{
+    if (m_cursorNavigation && m_cursorNavigation->m_currentItem) {
+        return m_cursorNavigation->m_currentItem->item();
+    }
+    return nullptr;
+}
+
 void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
 {
     qDebug() << "window changed, window = " << window;
