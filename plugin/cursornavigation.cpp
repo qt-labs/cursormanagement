@@ -173,7 +173,6 @@ CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *objec
 
     QQuickItem *item = static_cast<QQuickItem *>(object);
 
-    qWarning() << "Created a new CN attachment";
     return new CursorNavigationAttached(item);
 }
 
@@ -207,7 +206,6 @@ CursorNavigationAttached *CursorNavigation::cursorNavigationAttachment(QQuickIte
 
 void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
 {
-    qWarning() << "set cursor on item " << item << " , currentItem " << m_currentItem;
     if (item != m_currentItem) {
         if (m_currentItem) {
             m_currentItem->setHasCursor(false);
@@ -216,10 +214,8 @@ void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
         if (item && item->acceptsCursor()) {
             item->setHasCursor(true);
             m_currentItem = item;
-            qWarning() << "Set cursor to " << item->item();
             m_currentItem->item()->forceActiveFocus();
         } else {
-            qWarning() << "Set cursor to NULL";
             m_currentItem = nullptr;
         }
     }
