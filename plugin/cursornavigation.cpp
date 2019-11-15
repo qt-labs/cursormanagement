@@ -60,9 +60,9 @@ CursorNavigation::CursorNavigation(QQuickWindow *parent)
     onActiveFocusItemChanged();
 }
 
-bool CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
+bool CursorNavigation::move(qreal angle, qreal offset, qreal tolerance, bool discrete)
 {
-    QQuickItem *foundItem = find(angle, tolerance, discrete);
+    QQuickItem *foundItem = find(angle + offset, tolerance, discrete);
     CursorNavigationAttached *nextItem = cursorNavigationAttachment(foundItem);
 
     if (nextItem) {

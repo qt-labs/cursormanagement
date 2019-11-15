@@ -48,6 +48,7 @@ CursorNavigationAttached::CursorNavigationAttached(QQuickItem *parent)
 :QObject(parent),
 m_cursorNavigation(nullptr),
 m_parentNavigable(nullptr),
+m_angleOffset(0.0),
 m_acceptsCursor(false),
 m_hasCursor(false),
 m_trapsCursor(false),
@@ -70,6 +71,19 @@ CursorNavigationAttached::~CursorNavigationAttached()
         m_cursorNavigation->unregisterItem(this);
 }
 
+double CursorNavigationAttached::angleOffset() const
+{
+    return m_angleOffset;
+}
+
+void CursorNavigationAttached::setAngleOffset(double angleOffset)
+{
+    if (angleOffset != m_angleOffset) {
+        m_angleOffset = angleOffset;
+        emit angleOffsetChanged(m_angleOffset);
+        qWarning() << "rotation changed " << m_angleOffset;
+    }
+}
 bool CursorNavigationAttached::acceptsCursor() const
 {
     return m_acceptsCursor;
@@ -137,7 +151,8 @@ void CursorNavigationAttached::move(qreal angle, qreal tolerance)
         qreal a = qDegreesToRadians(angle);
         qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
-        if (m_cursorNavigation->move(a, t, false) && item)
+        double offset = item ? item->angleOffset() : 0.0;
+        if (m_cursorNavigation->move(a, offset, t, false) && item)
             item->moved(a,t);
     }
 }
@@ -149,7 +164,8 @@ void CursorNavigationAttached::move(const QVector2D &vector, qreal tolerance)
         qreal a = qAtan2(vector.y(), vector.x());
         qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
-        if (m_cursorNavigation->move(a, t, false) && item)
+        double offset = item ? item->angleOffset() : 0.0;
+        if (m_cursorNavigation->move(a, offset, t, false) && item)
             item->moved(a,t);
     }
 }
@@ -178,7 +194,8 @@ void CursorNavigationAttached::moveUp()
 {
     if (m_cursorNavigation) {
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
-        if (m_cursorNavigation->move(qDegreesToRadians(-90.0f), 0, true) && item)
+        double offset = item ? item->angleOffset() : 0.0;
+        if (m_cursorNavigation->move(qDegreesToRadians(-90.0f), offset, 0, true) && item)
             item->movedUp();
     }
 }
@@ -187,7 +204,8 @@ void CursorNavigationAttached::moveDown()
 {
     if (m_cursorNavigation) {
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
-        if (m_cursorNavigation->move(qDegreesToRadians(90.0f), 0, true) && item)
+        double offset = item ? item->angleOffset() : 0.0;
+        if (m_cursorNavigation->move(qDegreesToRadians(90.0f), offset, 0, true) && item)
             item->movedDown();
     }
 }
@@ -196,7 +214,8 @@ void CursorNavigationAttached::moveRight()
 {
     if (m_cursorNavigation) {
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
-        if (m_cursorNavigation->move(qDegreesToRadians(0.0f), 0, true) && item)
+        double offset = item ? item->angleOffset() : 0.0;
+        if (m_cursorNavigation->move(qDegreesToRadians(0.0f), offset, 0, true) && item)
             item->movedRight();
     }
 }
@@ -205,7 +224,8 @@ void CursorNavigationAttached::moveLeft()
 {
     if (m_cursorNavigation) {
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
-        if (m_cursorNavigation->move(qDegreesToRadians(180.0f), 0, true) && item)
+        double offset = item ? item->angleOffset() : 0.0;
+        if (m_cursorNavigation->move(qDegreesToRadians(180.0f), offset, 0, true) && item)
             item->movedLeft();
     }
 }

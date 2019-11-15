@@ -65,7 +65,7 @@ public:
     //void setMagnitude(qreal angle, qreal magnitude);
     //void setMagnitude(const QVector2D& vector);
     //move the cursor
-    bool move(qreal angle, qreal tolerance, bool discrete);
+    bool move(qreal angle, qreal offset, qreal tolerance, bool discrete);
     //find the next item without moving the cursor
     QQuickItem *find(qreal angle, qreal tolerance, bool discrete);
     bool action(Action action);

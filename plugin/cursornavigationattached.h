@@ -54,6 +54,8 @@ class QVector2D;
 class CursorNavigationAttached : public QObject
 {
     Q_OBJECT
+    //is used to add offsets to any directional movement of the cursor navigation
+    Q_PROPERTY(double angleOffset READ angleOffset WRITE setAngleOffset NOTIFY angleOffsetChanged)
     //is included for cursor navigation
     Q_PROPERTY(bool acceptsCursor READ acceptsCursor WRITE setAcceptsCursor NOTIFY acceptsCursorChanged)
     //indicates if item is currently selected, indicated also by activeFocus property
@@ -68,6 +70,7 @@ public:
     CursorNavigationAttached(QQuickItem *parent);
     ~CursorNavigationAttached();
 
+    double angleOffset() const;
     bool acceptsCursor() const;
     bool hasCursor() const;
     bool trapsCursor() const;
@@ -83,6 +86,7 @@ public:
     QQuickItem *item() const;
 
 public slots:
+    void setAngleOffset(double angleOffset);
     void setAcceptsCursor(bool acceptsCursor);
     void setTrapsCursor(bool trapsCursor);
     void setEscapeTarget(QQuickItem * escapeTarget);
@@ -113,6 +117,7 @@ public slots:
     QQuickItem *currentItem();
 
 signals:
+    void angleOffsetChanged(double angleOffset);
     void acceptsCursorChanged(bool acceptsCursor);
     void hasCursorChanged(bool hasCursor);
     void trapsCursorChanged(bool trapsCursor);
@@ -145,6 +150,7 @@ private:
     CursorNavigationAttached *m_parentNavigable;
     QList<CursorNavigationAttached*> m_children;
 
+    double m_angleOffset;
     bool m_acceptsCursor;
     bool m_hasCursor;
     bool m_trapsCursor;
