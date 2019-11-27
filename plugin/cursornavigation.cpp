@@ -77,8 +77,10 @@ bool CursorNavigation::move(qreal angle, qreal tolerance, bool discrete)
 
 QQuickItem *CursorNavigation::find(qreal angle, qreal tolerance, bool discrete)
 {
-    if (!m_currentItem)
-        return defaultItem()->item();
+    if (!m_currentItem) {
+        auto defaultItemRef = defaultItem();
+        return defaultItemRef ? defaultItemRef->item() : nullptr;
+    }
 
     if (m_currentItem->m_redirects.size()) {
         for (auto redirect : m_currentItem->m_redirects) {
