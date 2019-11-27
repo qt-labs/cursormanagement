@@ -49,6 +49,7 @@
 class CursorNavigation;
 class QQuickItem;
 class QQuickWindow;
+class QVector2D;
 
 class CursorNavigationAttached : public QObject
 {
@@ -90,14 +91,14 @@ public slots:
      * events are received by the item that currently has the cursor
      */
     void setMagnitude(qreal angle, qreal magnitude);
-    void setMagnitude(QVector2D vector);
+    void setMagnitude(const QVector2D &vector);
 
     void move(qreal angle, qreal tolerance = 0);
-    void move(QVector2D vector, qreal tolerance = 0);
+    void move(const QVector2D &vector, qreal tolerance = 0);
 
     //find the next item with this move, without moving
     QQuickItem *find(qreal angle, qreal tolerance = 0);
-    QQuickItem *find(QVector2D vector, qreal tolerance = 0);
+    QQuickItem *find(const QVector2D &vector, qreal tolerance = 0);
 
     void moveUp();
     void moveDown();

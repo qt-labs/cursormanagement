@@ -41,6 +41,7 @@
 #include "cursornavigation.h"
 #include <QQuickItem>
 #include <QQuickWindow>
+#include <QVector2D>
 #include <QtMath>
 
 CursorNavigationAttached::CursorNavigationAttached(QQuickItem *parent)
@@ -122,7 +123,7 @@ void CursorNavigationAttached::setMagnitude(qreal angle, qreal magnitude)
         m_cursorNavigation->m_currentItem->magnitudeChanged(angle, magnitude);
 }
 
-void CursorNavigationAttached::setMagnitude(QVector2D vector)
+void CursorNavigationAttached::setMagnitude(const QVector2D &vector)
 {
     if (m_cursorNavigation && m_cursorNavigation->m_currentItem)
         m_cursorNavigation->m_currentItem->magnitudeChanged(
@@ -141,7 +142,7 @@ void CursorNavigationAttached::move(qreal angle, qreal tolerance)
     }
 }
 
-void CursorNavigationAttached::move(QVector2D vector, qreal tolerance)
+void CursorNavigationAttached::move(const QVector2D &vector, qreal tolerance)
 {
     if (m_cursorNavigation) {
         qWarning() << "move (vector)";
@@ -163,7 +164,7 @@ QQuickItem *CursorNavigationAttached::find(qreal angle, qreal tolerance)
     return nullptr;
 }
 
-QQuickItem *CursorNavigationAttached::find(QVector2D vector, qreal tolerance)
+QQuickItem *CursorNavigationAttached::find(const QVector2D &vector, qreal tolerance)
 {
     if (m_cursorNavigation) {
         qreal a = qAtan2(vector.y(), vector.x());
