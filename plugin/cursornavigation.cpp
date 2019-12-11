@@ -44,6 +44,8 @@
 #include <QQuickItem>
 #include <QtMath>
 
+Q_LOGGING_CATEGORY(cursorNavigationLog, "cursor.navigation")
+
 const char CursorNavigation::windowPropertyName[] = "cursor_navigation";
 
 CursorNavigation::CursorNavigation(QQuickWindow *parent)
@@ -86,7 +88,7 @@ QQuickItem *CursorNavigation::find(qreal angle, qreal tolerance, bool discrete)
         for (auto redirect : m_currentItem->m_redirects) {
             if (redirect->angleIsIncluded(angle)) {
                 if (!redirect->target())
-                    qWarning() << "Redirect target is null";
+                    qCWarning(cursorNavigationLog) << "Redirect target is null";
                 return redirect->target();
             }
         }
@@ -122,7 +124,7 @@ QQuickItem *CursorNavigation::find(qreal angle, qreal tolerance, bool discrete)
 
 bool CursorNavigation::action(Action action)
 {
-    qWarning() << "handleActionCommand, action= " << action;
+    qCWarning(cursorNavigationLog) << "handleActionCommand, action= " << action;
     switch (action) {
         case Forward:
         break;
@@ -147,7 +149,7 @@ bool CursorNavigation::action(Action action)
                 }
                 escapeTarget = m_currentItem->m_parentNavigable->m_parentNavigable->item();
             }
-            qWarning() << "escaping, target = " << escapeTarget;
+            qCWarning(cursorNavigationLog) << "escaping, target = " << escapeTarget;
             setCursorOnItem(nullptr);
             escapeTarget->forceActiveFocus();
             onActiveFocusItemChanged();
@@ -169,7 +171,7 @@ CursorNavigationAttached *CursorNavigation::qmlAttachedProperties(QObject *objec
     }
 
     if (!qobject_cast<QQuickItem *>(object)) {
-        qWarning("Cannot manage cursor for a non-Item!");
+        qCWarning(cursorNavigationLog) << "Cannot manage cursor for a non-Item!";
         return nullptr;
     }
 
@@ -187,7 +189,7 @@ CursorNavigation *CursorNavigation::cursorNavigationForWindow(QQuickWindow *wind
     if (!oldCursorNavigation.isNull())
         return oldCursorNavigation.value<CursorNavigation *>();
 
-    qWarning() << "Created a new CN engine";
+    qCWarning(cursorNavigationLog) << "Created a new CN engine";
     CursorNavigation *cursorNavigation = new CursorNavigation(window);
     window->setProperty(windowPropertyName, QVariant::fromValue(cursorNavigation));
 
@@ -195,7 +197,7 @@ CursorNavigation *CursorNavigation::cursorNavigationForWindow(QQuickWindow *wind
     /*if (QQmlEngine *engine = cn->qmlEngine(window)) {
         engine->rootContext()->setContextProperty("_cursorNavigation", cn);
     } else {
-        qDebug() << "Couldn't find QQmlEngine";
+        qCDebug(cursorNavigationLog) << "Couldn't find QQmlEngine";
     }*/
 
     return cursorNavigation;
@@ -225,7 +227,8 @@ void CursorNavigation::setCursorOnItem(CursorNavigationAttached *item)
 
 void CursorNavigation::onActiveFocusItemChanged()
 {
-    qWarning() << "onActiveFocusItemChanged, item:" << m_window->activeFocusItem();
+    qCWarning(cursorNavigationLog) << "onActiveFocusItemChanged, item:"
+                                   << m_window->activeFocusItem();
 
     QQuickItem *item = m_window->activeFocusItem();
     while (item) {
@@ -241,7 +244,7 @@ void CursorNavigation::onActiveFocusItemChanged()
 
 void CursorNavigation::registerItem(CursorNavigationAttached* item)
 {
-    //qWarning() << "register item " << item;
+    //qCWarning(cursorNavigationLog) << "register item " << item;
     if (!item)
         return;
 
@@ -283,7 +286,7 @@ void CursorNavigation::registerItem(CursorNavigationAttached* item)
 
 void CursorNavigation::unregisterItem(CursorNavigationAttached* item)
 {
-    //qWarning() << "unregister item " << item;
+    //qCWarning(cursorNavigationLog) << "unregister item " << item;
     if (item == m_currentItem)
         setCursorOnItem(nullptr);
 

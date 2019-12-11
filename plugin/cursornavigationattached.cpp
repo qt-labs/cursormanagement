@@ -59,14 +59,14 @@ m_escapeTarget(nullptr)
 
     if (parent && item() && item()->window())
     {
-        qDebug() << "Item has a window already";
+        qCDebug(cursorNavigationLog) << "Item has a window already";
         onWindowChanged(item()->window());
     }
 }
 
 CursorNavigationAttached::~CursorNavigationAttached()
 {
-    qWarning() << "~CursorNavigationAttached";
+    qCWarning(cursorNavigationLog) << "~CursorNavigationAttached";
     if (m_cursorNavigation)
         m_cursorNavigation->unregisterItem(this);
 }
@@ -81,7 +81,7 @@ void CursorNavigationAttached::setAngleOffset(double angleOffset)
     if (angleOffset != m_angleOffset) {
         m_angleOffset = angleOffset;
         emit angleOffsetChanged(m_angleOffset);
-        qWarning() << "rotation changed " << m_angleOffset;
+        qCWarning(cursorNavigationLog) << "rotation changed " << m_angleOffset;
     }
 }
 bool CursorNavigationAttached::acceptsCursor() const
@@ -147,7 +147,7 @@ void CursorNavigationAttached::setMagnitude(const QVector2D &vector)
 void CursorNavigationAttached::move(qreal angle, qreal tolerance)
 {
     if (m_cursorNavigation) {
-        qWarning() << "move";
+        qCWarning(cursorNavigationLog) << "move";
         qreal a = qDegreesToRadians(angle);
         qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
@@ -160,7 +160,7 @@ void CursorNavigationAttached::move(qreal angle, qreal tolerance)
 void CursorNavigationAttached::move(const QVector2D &vector, qreal tolerance)
 {
     if (m_cursorNavigation) {
-        qWarning() << "move (vector)";
+        qCWarning(cursorNavigationLog) << "move (vector)";
         qreal a = qAtan2(vector.y(), vector.x());
         qreal t = qDegreesToRadians(qFabs(std::fmod(tolerance, 180)));
         CursorNavigationAttached *item = m_cursorNavigation->m_currentItem;
@@ -273,7 +273,7 @@ QQuickItem *CursorNavigationAttached::currentItem()
 
 void CursorNavigationAttached::onWindowChanged(QQuickWindow *window)
 {
-    qDebug() << "window changed, window = " << window;
+    qCDebug(cursorNavigationLog) << "window changed, window = " << window;
     if (m_cursorNavigation && m_acceptsCursor)
         m_cursorNavigation->unregisterItem(this);
 

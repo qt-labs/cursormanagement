@@ -49,8 +49,10 @@
 #include <QObject>
 #include <qqml.h>
 #include <QStack>
+#include <QtCore/QLoggingCategory>
 
-//TODO remove useless debug prints and change over to categorized logging
+
+Q_DECLARE_LOGGING_CATEGORY(cursorNavigationLog)
 
 class QQuickItem;
 

@@ -2,7 +2,7 @@ TARGET = cursornavigationplugin
 TEMPLATE = lib
 
 QT -= gui
-QT += qml quick
+QT += qml quick core
 
 CONFIG += plugin
 

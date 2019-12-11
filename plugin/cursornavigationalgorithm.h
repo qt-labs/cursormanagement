@@ -42,6 +42,9 @@
 
 #include <QList>
 #include "inputtypes.h"
+#include <QtCore/QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(cursorNavigationLog)
 
 class CursorNavigationAttached;
 

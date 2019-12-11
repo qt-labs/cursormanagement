@@ -69,10 +69,10 @@ CursorNavigationAttached* SpatialNavigation4Dir::getNextCandidate(
     if (candidates.isEmpty())
         return nullptr;
 
-    qDebug() << "4-way algortihm called, no of candidates=" << candidates.count();
+    qCDebug(cursorNavigationLog) << "4-way algortihm called, no of candidates=" << candidates.count();
 
     if (!currentItem && candidates.size()) {
-        qDebug() << "the spatial chooser falling back to first child" << candidates.first();
+        qCDebug(cursorNavigationLog) << "the spatial chooser falling back to first child" << candidates.first();
         return candidates.first();
     }
 

@@ -154,7 +154,7 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
      * -remember to use current item's coord system as the reference!!!
      */
 
-    //qWarning() << "##### navigation360: start, angle = " << cmd.angle << " tolerance = " << cmd.angleTolerance;
+    //qCWarning(cursorNavigationLog) << "##### navigation360: start, angle = " << cmd.angle << " tolerance = " << cmd.angleTolerance;
 
     if (candidates.isEmpty())
         return nullptr;
@@ -218,7 +218,7 @@ CursorNavigationAttached* SpatialNavigation360::getNextCandidate(
         }
     }
 
-    //qWarning() << "##### end, directHit = " <<
+    //qCWarning(cursorNavigationLog) << "##### end, directHit = " <<
       //            directHitItem << "  withinTolerances = " << withinToleranceItem;
 
     if (directHitItem)
