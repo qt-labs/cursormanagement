@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018, 2019 Luxoft Sweden AB. All rights reserved.
+** Copyright (C) 2018 - 2020 Luxoft Sweden AB. All rights reserved.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the cursor management module of the Qt Toolkit.
@@ -67,6 +67,11 @@ m_escapeTarget(nullptr)
 CursorNavigationAttached::~CursorNavigationAttached()
 {
     qCWarning(cursorNavigationLog) << "~CursorNavigationAttached";
+
+    for (auto && child: m_children) {
+        child->m_parentNavigable = nullptr;
+    }
+
     if (m_cursorNavigation)
         m_cursorNavigation->unregisterItem(this);
 }
